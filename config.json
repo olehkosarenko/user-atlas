@@ -1,0 +1,61 @@
+{
+  "params": {
+    "cmd": {
+      "type": "string",
+      "variables": {
+        "posts": [],
+        "post": {
+          "dependencies": [
+            "id"
+          ]
+        },
+        "postComments": {
+          "dependencies": [
+            "id"
+          ]
+        },
+        "comments": [],
+        "commentByPostId": {
+          "dependencies": [
+            "id"
+          ]
+        },
+        "albums": [],
+        "album": {
+          "dependencies": [
+            "id"
+          ]
+        },
+        "albumsPhotos": {
+          "dependencies": [
+            "id"
+          ]
+        },
+        "users": [],
+        "user": {
+          "dependencies": [
+            "id"
+          ]
+        },
+        "userPosts": {
+          "dependencies": [
+            "id"
+          ]
+        },
+        "userAlbums": {
+          "dependencies": [
+            "id"
+          ]
+        },
+        "userTodos": {
+          "dependencies": [
+            "id"
+          ]
+        }
+      }
+    },
+    "id": {
+      "type": "int"
+    }
+  }
+}

@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<ruleset name="UserAtlas">
+    <arg value="s"/>
+    <file>./src</file>
+
+    <rule ref="WordPress">
+        <!-- PSR4 autoload -->
+        <exclude name="WordPress.Files.FileName.InvalidClassFileName"/>
+        <exclude name="WordPress.Files.FileName.NotHyphenatedLowercase"/>
+        <exclude name="WordPress.NamingConventions.ValidVariableName.VariableNotSnakeCase"/>
+        <exclude name="WordPress.NamingConventions.ValidVariableName.PropertyNotSnakeCase"/>
+        <exclude name="WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase"/>
+        <!-- methods naming -->
+        <exclude name="WordPress.NamingConventions.ValidFunctionName.MethodNameInvalid"/>
+    </rule>
+
+    <!-- Allow CamelCase -->
+    <rule ref="Generic.NamingConventions.CamelCapsFunctionName">
+        <properties>
+            <property name="strict" value="0"/>
+        </properties>
+    </rule>
+
+    <!-- Allow short array syntax -->
+    <rule ref="Universal.Arrays.DisallowShortArraySyntax.Found">
+        <severity>0</severity>
+    </rule>
+    <rule ref="Generic.Arrays.DisallowLongArraySyntax.Found"/>
+
+    <rule ref="Generic.Metrics.NestingLevel">
+        <properties>
+            <property name="absoluteNestingLevel" value="3"/>
+        </properties>
+    </rule>
+
+</ruleset>

@@ -70,8 +70,8 @@ class Asset {
 	 */
 	public function addPatches(): void {
 		$this->pathes = [
-			'pluginDirUrl'    => plugin_dir_url( WP_APP_USER_TABLES_FILE ),
-			'entryPointsFile' => plugin_dir_path( WP_APP_USER_TABLES_FILE ) . '/assets/build/asset-manifest.json',
+			'pluginDirUrl'    => plugin_dir_url( WP_APP_USER_ATLAS_FILE ),
+			'entryPointsFile' => plugin_dir_path( WP_APP_USER_ATLAS_FILE ) . '/assets/build/asset-manifest.json',
 		];
 	}
 

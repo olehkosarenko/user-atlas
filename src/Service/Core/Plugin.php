@@ -18,49 +18,49 @@ class Plugin {
 	 *
 	 * @var string
 	 */
-	private $file;
+	private $file = '';
 
 	/**
 	 * The basename of the plugin.
 	 *
 	 * @var string
 	 */
-	private $basename;
+	private $basename = '';
 
 	/**
 	 * The name of the plugin.
 	 *
 	 * @var string
 	 */
-	private $name;
+	private $name = '';
 
 	/**
 	 * The version of the plugin.
 	 *
 	 * @var string
 	 */
-	private $version;
+	private $version = '';
 
 	/**
 	 * The slug of the plugin.
 	 *
 	 * @var string
 	 */
-	private $slug;
+	private $slug = '';
 
 	/**
 	 * The url of the plugin.
 	 *
 	 * @var string
 	 */
-	private $url;
+	private $url = '';
 
 	/**
 	 * The path of the plugin.
 	 *
 	 * @var string
 	 */
-	private $path;
+	private $path = '';
 
 	/**
 	 * Initialize the plugin
@@ -68,9 +68,9 @@ class Plugin {
 	 * @return void
 	 */
 	public function init(): void {
-		$this->file     = WP_APP_USER_TABLES_FILE;
-		$this->basename = basename( WP_APP_USER_TABLES_FILE );
-		$plugin         = get_plugin_data( WP_APP_USER_TABLES_FILE );
+		$this->file     = WP_APP_USER_ATLAS_FILE;
+		$this->basename = basename( WP_APP_USER_ATLAS_FILE );
+		$plugin         = get_plugin_data( WP_APP_USER_ATLAS_FILE );
 		$this->name     = $plugin['Name'];
 		$this->slug     = $plugin['TextDomain'];
 		$this->version  = $plugin['Version'];
@@ -83,7 +83,7 @@ class Plugin {
 	 *
 	 * @return string
 	 */
-	public function getFile() {
+	public function getFile(): string {
 		return $this->file;
 	}
 
@@ -92,7 +92,7 @@ class Plugin {
 	 *
 	 * @return string
 	 */
-	public function getBasename() {
+	public function getBasename(): string {
 		return $this->basename;
 	}
 
@@ -101,7 +101,7 @@ class Plugin {
 	 *
 	 * @return string
 	 */
-	public function getName() {
+	public function getName(): string {
 		return $this->name;
 	}
 
@@ -110,7 +110,7 @@ class Plugin {
 	 *
 	 * @return string
 	 */
-	public function getVersion() {
+	public function getVersion(): string {
 		return $this->version;
 	}
 
@@ -119,7 +119,7 @@ class Plugin {
 	 *
 	 * @return string
 	 */
-	public function getSlug() {
+	public function getSlug(): string {
 		return $this->slug;
 	}
 
@@ -128,7 +128,7 @@ class Plugin {
 	 *
 	 * @return string
 	 */
-	public function getUrl() {
+	public function getUrl(): string {
 		return $this->url;
 	}
 
@@ -137,7 +137,7 @@ class Plugin {
 	 *
 	 * @return string
 	 */
-	public function getPath() {
+	public function getPath(): string {
 		return $this->path;
 	}
 }

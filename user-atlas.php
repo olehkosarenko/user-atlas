@@ -13,7 +13,7 @@ namespace WpApp\UserAtlas;
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'WP_APP_USER_TABLES_FILE', __FILE__ );
+define( 'WP_APP_USER_ATLAS_FILE', __FILE__ );
 
 if ( ! class_exists( UserAtlas::class ) && is_readable( __DIR__ . '/vendor/autoload.php' ) ) {
 	require_once __DIR__ . '/vendor/autoload.php';

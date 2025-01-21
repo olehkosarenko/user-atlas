@@ -79,7 +79,7 @@ class Ajax {
 		ArgsValidator $argsValidator = null,
 		ConfigValidator $configValidator = null
 	) {
-		$path                  = plugin_dir_path( WP_APP_USER_TABLES_FILE );
+		$path                  = plugin_dir_path( WP_APP_USER_ATLAS_FILE );
 		$this->expectParams    = $this->getByKey( $path . 'config.json', 'params' );
 		$this->api             = $api ?? new ApiRepository();
 		$this->receivedArgs    = $receivedArgs ?? new Request();

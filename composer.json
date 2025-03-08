@@ -14,12 +14,8 @@
         "issues": "https://github.com/olehkosarenko/user-tables/issues"
     },
     "require": {
-        "php": ">=7.2",
+        "php": ">=7.4",
         "psr/log": "~1.0"
-    },
-    "require-dev": {
-        "wp-coding-standards/wpcs": "^3.0",
-        "squizlabs/php_codesniffer": "^3.6"
     },
     "autoload": {
         "psr-4": {

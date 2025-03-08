@@ -20,14 +20,14 @@ trait ErrorManagerTrait {
 	 *
 	 * @var array
 	 */
-	protected array $errors = [];
+	private array $errors = [];
 
 	/**
 	 * Status
 	 *
 	 * @var bool
 	 */
-	protected bool $status = true;
+	private bool $status = true;
 
 	/**
 	 * Check if there are errors
@@ -52,5 +52,14 @@ trait ErrorManagerTrait {
 		}
 
 		return '';
+	}
+
+	/**
+	 * Check if there are no errors
+	 *
+	 * @return bool
+	 */
+	public function isOk(): bool {
+		return $this->status;
 	}
 }

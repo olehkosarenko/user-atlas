@@ -39,7 +39,7 @@ trait SingletonTrait {
 	 *
 	 * @throws \Exception When trying to unserialize a singleton.
 	 */
-	private function __wakeup() {
+	public function __wakeup() {
 		throw new \Exception( 'Cannot unserialize a singleton.' );
 	}
 }

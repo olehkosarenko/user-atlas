@@ -18,49 +18,49 @@ class Plugin {
 	 *
 	 * @var string
 	 */
-	private $file = '';
+	private string $file = '';
 
 	/**
 	 * The basename of the plugin.
 	 *
 	 * @var string
 	 */
-	private $basename = '';
+	private string $basename = '';
 
 	/**
 	 * The name of the plugin.
 	 *
 	 * @var string
 	 */
-	private $name = '';
+	private string $name = '';
 
 	/**
 	 * The version of the plugin.
 	 *
 	 * @var string
 	 */
-	private $version = '';
+	private string $version = '';
 
 	/**
 	 * The slug of the plugin.
 	 *
 	 * @var string
 	 */
-	private $slug = '';
+	private string $slug = '';
 
 	/**
 	 * The url of the plugin.
 	 *
 	 * @var string
 	 */
-	private $url = '';
+	private string $url = '';
 
 	/**
 	 * The path of the plugin.
 	 *
 	 * @var string
 	 */
-	private $path = '';
+	private string $path = '';
 
 	/**
 	 * Initialize the plugin

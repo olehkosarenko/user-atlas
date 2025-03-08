@@ -26,7 +26,7 @@ class Option {
 	 *
 	 * @var array
 	 */
-	private $options;
+	private array $options;
 
 	/**
 	 * Init options

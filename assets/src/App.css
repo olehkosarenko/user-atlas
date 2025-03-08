@@ -1,8 +1,8 @@
 .wrapper {
-    padding: 60px 0;
+	padding: 60px 0;
 }
 
 .error {
-    color: red;
-    font-width: bold;
+	color: #f00;
+	font-weight: bold;
 }

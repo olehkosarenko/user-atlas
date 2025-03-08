@@ -47,7 +47,7 @@ class ConfigValidator {
 		$this->validateTypes();
 		$this->validateDependencies();
 
-		return $this->status;
+		return $this->isOk();
 	}
 
 	/**

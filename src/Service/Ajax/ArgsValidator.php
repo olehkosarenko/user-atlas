@@ -73,7 +73,7 @@ class ArgsValidator {
 		$this->validateNonce();
 		$this->validateParams();
 
-		return $this->status;
+		return $this->isOk();
 	}
 
 	/**

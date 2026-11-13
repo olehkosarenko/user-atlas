@@ -56,7 +56,7 @@ function App() {
 					setLoadUsersButtonDisplay( false );
 					setUsers( dataArray );
 				}
-				if ( ! mainObject.isReactDev && mainObject.isUserAdmin ) {
+				if ( mainObject.isUserAdmin ) {
 					setExpiration( 'No cache' );
 					if ( data?.data?.expiration ) {
 						setExpiration( data?.data?.expiration );

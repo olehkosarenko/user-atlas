@@ -2,7 +2,7 @@
     "name": "wpapp/user-tables",
     "description": "This plugin displays users in a dynamic table.",
     "type": "wordpress-plugin",
-    "license": "GPL-3.0+",
+    "license": "GPL-2.0-or-later",
     "authors": [
         {
             "name": "Oleh Kosarenko",

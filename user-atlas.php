@@ -8,7 +8,8 @@
  * Requires PHP: 7.4
  * Author: Oleh Kosarenko
  * Author URI: https://github.com/olehkosarenko
- * License: GPL-3.0+
+ * License: GPL-2.0-or-later
+ * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  *
  * @package WpApp\UserAtlas
  */

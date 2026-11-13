@@ -6,11 +6,14 @@ function UsersTable( { users, openDetailsClick } ) {
 		<div
 			className="user-atlas__table-wrap"
 			role="region"
-			aria-label="Users"
+			aria-labelledby="user-atlas-users-caption"
 			tabIndex="0"
 		>
 			<table className="user-atlas__table">
-				<caption className="user-atlas__screen-reader-text">
+				<caption
+					id="user-atlas-users-caption"
+					className="user-atlas__screen-reader-text"
+				>
 					Users
 				</caption>
 				<thead>

@@ -56,6 +56,8 @@ composer lint       # check the code with PHPCS
 composer lint:fix   # fix what can be fixed automatically with PHPCBF
 ```
 
+The code is also checked against the WordPress VIP coding standards (WordPress-VIP-Go); the few exceptions are documented in `phpcs.xml.dist` and inline.
+
 The same check runs in GitHub Actions on every pull request and on pushes to `main`.
 
 ### Frontend

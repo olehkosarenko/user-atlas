@@ -20,6 +20,11 @@
 
     <rule ref="PHPCompatibilityWP"/>
 
+    <rule ref="WordPress-VIP-Go">
+        <!-- The plugin runs outside VIP, where vip_safe_wp_remote_get() is not available. -->
+        <exclude name="WordPressVIPMinimum.Functions.RestrictedFunctions.wp_remote_get_wp_remote_get"/>
+    </rule>
+
     <rule ref="WordPress">
         <!-- PSR4 autoload -->
         <exclude name="WordPress.Files.FileName.InvalidClassFileName"/>

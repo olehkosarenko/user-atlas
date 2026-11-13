@@ -11,7 +11,7 @@ import MainObject from './utils/mainObject';
 import flattenJSON from './utils/flattenJSON';
 
 function App() {
-	const mainObject = useMemo(() => new MainObject(), []);
+	const mainObject = useMemo( () => new MainObject(), [] );
 	const [ users, setUsers ] = useState( [] );
 	const [ details, setDetails ] = useState( [] );
 	const [ detailsId, setDetailsId ] = useState( null );
@@ -25,58 +25,61 @@ function App() {
 		useState( false );
 	const [ loadingDisplay, setLoadingDisplay ] = useState( true );
 
-	const fetchData = useCallback(async ( url, isDetails = false ) => {
-		setLoadingDisplay( true );
-		setError( null );
-		setExpiration( null );
-		try {
-			const response = await fetch( url, {
-				method: 'GET',
-				cache: 'no-store',
-			} );
-			const data = await response.json();
-			if (
-				! response?.ok ||
-				( data?.status && data.status !== 'success' )
-			) {
-				throw new Error( data?.message || 'Incorrect request' );
-			}
-			if ( ! data && ! data?.data?.content ) {
-				throw new Error( 'No data found' );
-			}
-			let dataArray = data?.data?.content || data;
-			if ( isDetails ) {
-				dataArray = flattenJSON( dataArray );
-				setUsersDisplay( false );
-				setDetails( dataArray );
-				setDetailsDisplay( true );
-				setLoadUsersButtonDisplay( true );
-			} else {
-				setLoadUsersButtonDisplay( false );
-				setUsers( dataArray );
-			}
-			if ( ! mainObject.isReactDev && mainObject.isUserAdmin ) {
-				setExpiration( 'No cache' );
-				if ( data?.data?.expiration ) {
-					setExpiration( data?.data?.expiration );
+	const fetchData = useCallback(
+		async ( url, isDetails = false ) => {
+			setLoadingDisplay( true );
+			setError( null );
+			setExpiration( null );
+			try {
+				const response = await fetch( url, {
+					method: 'GET',
+					cache: 'no-store',
+				} );
+				const data = await response.json();
+				if (
+					! response?.ok ||
+					( data?.status && data.status !== 'success' )
+				) {
+					throw new Error( data?.message || 'Incorrect request' );
 				}
+				if ( ! data && ! data?.data?.content ) {
+					throw new Error( 'No data found' );
+				}
+				let dataArray = data?.data?.content || data;
+				if ( isDetails ) {
+					dataArray = flattenJSON( dataArray );
+					setUsersDisplay( false );
+					setDetails( dataArray );
+					setDetailsDisplay( true );
+					setLoadUsersButtonDisplay( true );
+				} else {
+					setLoadUsersButtonDisplay( false );
+					setUsers( dataArray );
+				}
+				if ( ! mainObject.isReactDev && mainObject.isUserAdmin ) {
+					setExpiration( 'No cache' );
+					if ( data?.data?.expiration ) {
+						setExpiration( data?.data?.expiration );
+					}
+				}
+			} catch ( errorMessage ) {
+				console.error( errorMessage );
+				setError( errorMessage.toString() );
+				if ( isDetails ) {
+					setLoadDetailsButtonDisplay( true );
+				} else {
+					setLoadUsersButtonDisplay( true );
+				}
+			} finally {
+				setLoadingDisplay( false );
 			}
-		} catch ( errorMessage ) {
-			console.error( errorMessage );
-			setError( errorMessage.toString() );
-			if ( isDetails ) {
-				setLoadDetailsButtonDisplay( true );
-			} else {
-				setLoadUsersButtonDisplay( true );
-			}
-		} finally {
-			setLoadingDisplay( false );
-		}
-	}, [mainObject]);
+		},
+		[ mainObject ]
+	);
 
 	useEffect( () => {
 		fetchData( mainObject.usersListUrl() );
-	}, [fetchData, mainObject] );
+	}, [ fetchData, mainObject ] );
 
 	const handleOpenDetailsClick = ( event, id ) => {
 		event.preventDefault();

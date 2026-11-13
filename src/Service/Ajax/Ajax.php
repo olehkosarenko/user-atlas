@@ -95,6 +95,11 @@ class Ajax {
 	public function handler(): void {
 		$this->beforeSend();
 		$data['content'] = $this->send();
+		$expiration      = $this->api->expiration();
+		if ( $expiration > 0 && current_user_can( 'manage_options' ) ) {
+			$data['expiration'] = wp_date( 'Y-m-d H:i:s', $expiration );
+		}
+
 		$this->afterSend( $data );
 	}
 

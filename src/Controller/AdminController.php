@@ -27,13 +27,6 @@ class AdminController {
 	private object $setting;
 
 	/**
-	 * Cache Manager instance.
-	 *
-	 * @var object CacheManager
-	 */
-	private object $cacheManager;
-
-	/**
 	 * Controller constructor.
 	 *
 	 * @param AdminSetting|null $setting Settings instance.

@@ -9,6 +9,8 @@ declare( strict_types=1 );
 
 namespace WpApp\UserAtlas\Repository\Api;
 
+use WpApp\UserAtlas\Service\Cache\ApiCache;
+
 defined( 'ABSPATH' ) || die();
 
 /**
@@ -24,6 +26,38 @@ abstract class AbstractApi {
 	 * Default request timeout in seconds
 	 */
 	protected const REQUEST_TIMEOUT = 3;
+
+	/**
+	 * API cache instance.
+	 *
+	 * @var ApiCache
+	 */
+	protected ApiCache $cache;
+
+	/**
+	 * Unix timestamp when the last returned response expires in the cache, 0 if it is not cached.
+	 *
+	 * @var int
+	 */
+	protected int $expiration = 0;
+
+	/**
+	 * AbstractApi constructor.
+	 *
+	 * @param ApiCache|null $cache Cache instance.
+	 */
+	public function __construct( ?ApiCache $cache = null ) {
+		$this->cache = $cache ?? new ApiCache();
+	}
+
+	/**
+	 * Get when the last returned response expires in the cache
+	 *
+	 * @return int Unix timestamp, 0 if the response is not cached.
+	 */
+	public function expiration(): int {
+		return $this->expiration;
+	}
 
 	/**
 	 * Get the request timeout in seconds
@@ -50,11 +84,19 @@ abstract class AbstractApi {
 	 * @throws \Exception Invalid API response.
 	 */
 	public function send( string $url ): array {
+		$this->expiration = 0;
+
+		$cached = $this->cache->get( $url );
+		if ( null !== $cached ) {
+			$this->expiration = (int) $cached['expires'];
+
+			return $cached['content'];
+		}
+
 		$content = [];
 		$error   = [];
-		$url     = self::API_URL . $url;
 		try {
-			$response = wp_remote_get( $url, [ 'timeout' => $this->timeout() ] );
+			$response = wp_remote_get( self::API_URL . $url, [ 'timeout' => $this->timeout() ] );
 			if ( is_wp_error( $response ) ) {
 				throw new \Exception( $response->get_error_message() );
 			}
@@ -85,6 +127,8 @@ abstract class AbstractApi {
 		if ( ! empty( $error ) ) {
 			return $error;
 		}
+
+		$this->expiration = $this->cache->set( $url, $content );
 
 		return $content;
 	}

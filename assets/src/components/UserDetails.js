@@ -6,11 +6,14 @@ function UsersDetails( { details } ) {
 		<div
 			className="user-atlas__table-wrap"
 			role="region"
-			aria-label="User details"
+			aria-labelledby="user-atlas-details-caption"
 			tabIndex="0"
 		>
 			<table className="user-atlas__table">
-				<caption className="user-atlas__screen-reader-text">
+				<caption
+					id="user-atlas-details-caption"
+					className="user-atlas__screen-reader-text"
+				>
 					User details
 				</caption>
 				<thead>

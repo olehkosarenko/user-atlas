@@ -63,7 +63,6 @@ function App() {
 					}
 				}
 			} catch ( errorMessage ) {
-				console.error( errorMessage );
 				setError( errorMessage.toString() );
 				if ( isDetails ) {
 					setLoadDetailsButtonDisplay( true );

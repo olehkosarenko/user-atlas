@@ -57,15 +57,6 @@ class LoadPage {
 	}
 
 	/**
-	 * Setup hooks
-	 *
-	 * @return void
-	 */
-	public function enqueueScripts(): void {
-		do_action( 'wp_enqueue_scripts' );
-	}
-
-	/**
 	 * Add a title to the page
 	 *
 	 * @param ?string $title Title.

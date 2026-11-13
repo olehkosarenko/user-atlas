@@ -66,11 +66,10 @@ class ViewController {
 		if ( ! $this->checkPage->isPage() ) {
 			return;
 		}
-		add_action( 'wp_enqueue_scripts', [ $this->asset, 'enqueueScripts' ] );
+		add_action( 'enqueue_embed_scripts', [ $this->asset, 'enqueueScripts' ] );
 		add_filter( 'pre_get_document_title', [ $this->loadPage, 'changeTitle' ] );
 		add_action( 'template_redirect', [ $this->loadPage, 'changeHeader' ], 0 );
 		add_action( 'template_redirect', [ $this->loadPage, 'changeWpQuery' ], 0 );
-		add_action( 'template_redirect', [ $this->loadPage, 'enqueueScripts' ], 0 );
 		add_action( 'template_redirect', [ $this->loadPage, 'loadTemplate' ], 0 );
 	}
 }

@@ -7,6 +7,8 @@
  * Author: Oleh Kosarenko
  * Author URI: https://github.com/olehkosarenko
  * License: GPL-3.0+
+ *
+ * @package WpApp\UserAtlas
  */
 
 namespace WpApp\UserAtlas;

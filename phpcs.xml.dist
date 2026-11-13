@@ -1,7 +1,24 @@
 <?xml version="1.0"?>
 <ruleset name="UserAtlas">
-    <arg value="s"/>
+    <description>Coding standards for the User Atlas plugin.</description>
+
+    <file>./user-atlas.php</file>
     <file>./src</file>
+
+    <exclude-pattern>/vendor/*</exclude-pattern>
+    <exclude-pattern>/assets/*</exclude-pattern>
+
+    <arg value="sp"/>
+    <arg name="colors"/>
+    <arg name="extensions" value="php"/>
+    <arg name="parallel" value="8"/>
+    <arg name="cache" value=".phpcs.cache"/>
+
+    <!-- Supported versions: keep in sync with composer.json and the plugin header. -->
+    <config name="testVersion" value="7.4-"/>
+    <config name="minimum_wp_version" value="6.6"/>
+
+    <rule ref="PHPCompatibilityWP"/>
 
     <rule ref="WordPress">
         <!-- PSR4 autoload -->
@@ -12,6 +29,24 @@
         <exclude name="WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase"/>
         <!-- methods naming -->
         <exclude name="WordPress.NamingConventions.ValidFunctionName.MethodNameInvalid"/>
+    </rule>
+
+    <rule ref="WordPress.WP.I18n">
+        <properties>
+            <property name="text_domain" type="array">
+                <element value="user-atlas"/>
+            </property>
+        </properties>
+    </rule>
+
+    <rule ref="WordPress.NamingConventions.PrefixAllGlobals">
+        <properties>
+            <property name="prefixes" type="array">
+                <element value="user_atlas"/>
+                <element value="WpApp\UserAtlas"/>
+                <element value="WP_APP_USER_ATLAS"/>
+            </property>
+        </properties>
     </rule>
 
     <!-- Allow CamelCase -->
@@ -32,5 +67,4 @@
             <property name="absoluteNestingLevel" value="3"/>
         </properties>
     </rule>
-
 </ruleset>

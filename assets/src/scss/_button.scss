@@ -1,0 +1,18 @@
+@use "variables" as *;
+
+.user-atlas__button {
+	display: inline-block;
+	margin-inline-end: 0.5rem;
+	padding: 0.375rem 0.75rem;
+	font: inherit;
+	color: #fff;
+	background-color: $user-atlas-color-primary;
+	border: 1px solid $user-atlas-color-primary;
+	border-radius: $user-atlas-radius;
+	cursor: pointer;
+
+	&:hover {
+		background-color: $user-atlas-color-primary-hover;
+		border-color: $user-atlas-color-primary-hover;
+	}
+}

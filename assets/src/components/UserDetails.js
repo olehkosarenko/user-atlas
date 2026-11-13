@@ -3,8 +3,8 @@ import UserDetail from './UserDetail';
 
 function UsersDetails( { details } ) {
 	return (
-		<div className="table-responsive">
-			<table className="table table-striped table-hover">
+		<div className="user-atlas__table-wrap">
+			<table className="user-atlas__table">
 				<thead>
 					<tr>
 						<th>Param</th>

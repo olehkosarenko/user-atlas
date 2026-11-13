@@ -3,8 +3,8 @@ import UserItem from './UserItem';
 
 function UsersTable( { users, openDetailsClick } ) {
 	return (
-		<div className="table-responsive">
-			<table className="table table-striped table-hover">
+		<div className="user-atlas__table-wrap">
+			<table className="user-atlas__table">
 				<thead>
 					<tr>
 						<th>id</th>

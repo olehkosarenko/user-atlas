@@ -1,0 +1,9 @@
+@use "variables" as *;
+
+.user-atlas__notice {
+	margin-block-end: 1rem;
+	padding: 1rem;
+	background-color: $user-atlas-color-stripe;
+	border: 1px solid $user-atlas-color-border;
+	border-radius: $user-atlas-radius;
+}

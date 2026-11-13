@@ -1,0 +1,32 @@
+@use "variables" as *;
+
+.user-atlas__table-wrap {
+	margin-block-end: 1rem;
+	overflow-x: auto;
+}
+
+.user-atlas__table {
+	width: 100%;
+	border-collapse: collapse;
+
+	th,
+	td {
+		padding: 0.5rem;
+		text-align: start;
+		vertical-align: top;
+		border-block-end: 1px solid $user-atlas-color-border;
+	}
+
+	thead th {
+		font-weight: 700;
+		border-block-end-width: 2px;
+	}
+
+	tbody tr:nth-child(odd) {
+		background-color: $user-atlas-color-stripe;
+	}
+
+	tbody tr:hover {
+		background-color: $user-atlas-color-row-hover;
+	}
+}

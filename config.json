@@ -2,6 +2,7 @@
   "params": {
     "cmd": {
       "type": "string",
+      "required": true,
       "variables": {
         "posts": [],
         "post": {

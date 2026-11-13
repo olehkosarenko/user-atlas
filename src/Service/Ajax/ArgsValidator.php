@@ -100,6 +100,10 @@ class ArgsValidator {
 	public function validateParams(): void {
 		foreach ( $this->expectQueries as $paramName => $paramValue ) {
 			if ( ! in_array( $paramName, array_keys( $this->args ), true ) ) {
+				if ( ! empty( $paramValue['required'] ) ) {
+					$this->addError( 'Missing required param ' . $paramName );
+				}
+
 				continue;
 			}
 

@@ -51,7 +51,7 @@ abstract class AbstractApi {
 			}
 
 			$content = json_decode( $body, true );
-			if ( empty( $content ) ) {
+			if ( ! is_array( $content ) ) {
 				throw new \Exception( 'Invalid JSON' );
 			}
 		} catch ( \Exception $err ) {

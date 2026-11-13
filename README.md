@@ -9,22 +9,23 @@
 - WordPress 6.6 or later
 - PHP 7.4 or later
 - [Composer](https://getcomposer.org/)
-- Node.js and npm, only if you change the frontend
+- Node.js 20.19 or later and npm, to build the frontend
 
 ## Installation
 
-The `vendor/` directory is not committed, so install the Composer dependencies after cloning. Without them the plugin does not load.
+The `vendor/` and `assets/build/` directories are not committed, so install the Composer dependencies and build the frontend after cloning. Without them the plugin does not load.
 
 ```sh
 cd wp-content/plugins
 git clone https://github.com/olehkosarenko/user-atlas.git
 cd user-atlas
 composer install --no-dev
+cd assets
+npm ci
+npm run build
 ```
 
 Use `composer install` without `--no-dev` if you also want the development tools (PHPCS).
-
-The compiled frontend in `assets/build/` is committed, so no build step is needed to run the plugin.
 
 Then activate **User Atlas** in **Plugins**.
 
@@ -59,20 +60,20 @@ The same check runs in GitHub Actions on every pull request and on pushes to `ma
 
 ### Frontend
 
-The frontend source is in `assets/src`. To rebuild it:
+The frontend is a React app built with [`@wordpress/scripts`](https://developer.wordpress.org/block-editor/reference-guides/packages/packages-scripts/). The source is in `assets/src`, the build goes to `assets/build`. React comes from WordPress (`wp-element`), it is not bundled.
 
 ```sh
 cd assets
-npm install
-npm run build
-```
-
-Lint the frontend code:
-
-```sh
+npm ci
+npm run build      # production build
+npm start          # rebuild on every change
+npm test           # unit tests
 npm run lint:js    # WordPress JavaScript Coding Standards
 npm run lint:css   # WordPress CSS Coding Standards
+npm run format     # format the code with the WordPress Prettier config
 ```
+
+GitHub Actions runs the linters, the unit tests and the build on every pull request and on pushes to `main`.
 
 ## License
 

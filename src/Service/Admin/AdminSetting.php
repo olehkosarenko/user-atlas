@@ -104,7 +104,7 @@ class AdminSetting {
 				<?php
 				settings_fields( 'user_atlas__group' );
 				do_settings_sections( $this->plugin->getSlug() );
-				submit_button( 'Save' );
+				submit_button( __( 'Save', 'user-atlas' ) );
 				?>
 			</form>
 
@@ -178,13 +178,17 @@ class AdminSetting {
 	public function fields(): void {
 		$this->plugin->init();
 		register_setting( 'user_atlas__group', 'user_atlas__options', [ $this->prepareOption, 'sanitize' ] );
-		add_settings_section( 'user_atlas__section_main', 'Options', '', $this->plugin->getSlug() );
+		add_settings_section( 'user_atlas__section_main', esc_html__( 'Options', 'user-atlas' ), '', $this->plugin->getSlug() );
 		$endpoint = $this->option->get( 'endpoint', 'user-atlas' );
 		$endpoint = apply_filters( 'user_atlas__endpoint', $endpoint );
 
 		add_settings_field(
 			'endpoint',
-			'<a href="' . home_url( $endpoint ) . '/">Endpoint</a>',
+			sprintf(
+				'<a href="%1$s">%2$s</a>',
+				esc_url( home_url( $endpoint ) . '/' ),
+				esc_html__( 'Endpoint', 'user-atlas' )
+			),
 			[ $this, 'fieldInputEndpoint' ],
 			$this->plugin->getSlug(),
 			'user_atlas__section_main'
@@ -192,7 +196,7 @@ class AdminSetting {
 
 		add_settings_field(
 			'title',
-			'Title',
+			esc_html__( 'Title', 'user-atlas' ),
 			[ $this, 'fieldInputTitle' ],
 			$this->plugin->getSlug(),
 			'user_atlas__section_main'
@@ -200,7 +204,7 @@ class AdminSetting {
 
 		add_settings_field(
 			'last_update',
-			'Last Update',
+			esc_html__( 'Last Update', 'user-atlas' ),
 			[ $this, 'fieldLabelLastUpdate' ],
 			$this->plugin->getSlug(),
 			'user_atlas__section_main'

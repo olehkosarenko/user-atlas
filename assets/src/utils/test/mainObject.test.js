@@ -1,17 +1,20 @@
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import MainObject from '../mainObject';
 
 describe( 'MainObject', () => {
 	afterEach( () => {
-		delete window.global_user_atlas;
+		vi.unstubAllGlobals();
 	} );
 
 	it( 'reads settings from global_user_atlas', () => {
-		window.global_user_atlas = {
-			ajaxUrl: 'https://example.com/wp-admin/admin-ajax.php',
-			nonce: 'abc123',
-			title: 'Team',
-			isUserAdmin: true,
-		};
+		vi.stubGlobal( 'window', {
+			global_user_atlas: {
+				ajaxUrl: 'https://example.com/wp-admin/admin-ajax.php',
+				nonce: 'abc123',
+				title: 'Team',
+				isUserAdmin: true,
+			},
+		} );
 
 		const mainObject = new MainObject();
 
@@ -24,6 +27,8 @@ describe( 'MainObject', () => {
 	} );
 
 	it( 'falls back to defaults when global_user_atlas is missing', () => {
+		vi.stubGlobal( 'window', {} );
+
 		const mainObject = new MainObject();
 
 		expect( mainObject.ajaxUrl ).toBe( '' );
@@ -33,10 +38,12 @@ describe( 'MainObject', () => {
 	} );
 
 	it( 'builds the users list URL', () => {
-		window.global_user_atlas = {
-			ajaxUrl: '/wp-admin/admin-ajax.php',
-			nonce: 'abc123',
-		};
+		vi.stubGlobal( 'window', {
+			global_user_atlas: {
+				ajaxUrl: '/wp-admin/admin-ajax.php',
+				nonce: 'abc123',
+			},
+		} );
 
 		expect( new MainObject().usersListUrl() ).toBe(
 			'/wp-admin/admin-ajax.php?action=user_atlas&nonce=abc123&cmd=users'
@@ -44,10 +51,12 @@ describe( 'MainObject', () => {
 	} );
 
 	it( 'builds the user details URL', () => {
-		window.global_user_atlas = {
-			ajaxUrl: '/wp-admin/admin-ajax.php',
-			nonce: 'abc123',
-		};
+		vi.stubGlobal( 'window', {
+			global_user_atlas: {
+				ajaxUrl: '/wp-admin/admin-ajax.php',
+				nonce: 'abc123',
+			},
+		} );
 
 		expect( new MainObject().userDetailsUrl( 5 ) ).toBe(
 			'/wp-admin/admin-ajax.php?action=user_atlas&nonce=abc123&cmd=user&id=5'
@@ -55,6 +64,8 @@ describe( 'MainObject', () => {
 	} );
 
 	it( 'requires a user ID for the details URL', () => {
+		vi.stubGlobal( 'window', {} );
+
 		expect( () => new MainObject().userDetailsUrl() ).toThrow(
 			'User ID is required'
 		);

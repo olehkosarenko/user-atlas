@@ -176,6 +176,7 @@ class AdminSetting {
 	 * @return void
 	 */
 	public function fields(): void {
+		$this->plugin->init();
 		register_setting( 'user_atlas__group', 'user_atlas__options', [ $this->prepareOption, 'sanitize' ] );
 		add_settings_section( 'user_atlas__section_main', 'Options', '', $this->plugin->getSlug() );
 		$endpoint = $this->option->get( 'endpoint', 'user-atlas' );

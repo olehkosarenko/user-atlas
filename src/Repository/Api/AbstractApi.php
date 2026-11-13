@@ -114,7 +114,7 @@ abstract class AbstractApi {
 		if ( $this->cache->isPaused() ) {
 			return [
 				'status'  => 'error',
-				'message' => 'API is temporarily unavailable, please try again later',
+				'message' => __( 'API is temporarily unavailable, please try again later', 'user-atlas' ),
 			];
 		}
 

@@ -4,6 +4,8 @@
  * Plugin URI: https://github.com/olehkosarenko/user-atlas
  * Description: This plugin displays users in a dynamic table.
  * Version: 1.0
+ * Requires at least: 6.6
+ * Requires PHP: 7.4
  * Author: Oleh Kosarenko
  * Author URI: https://github.com/olehkosarenko
  * License: GPL-3.0+

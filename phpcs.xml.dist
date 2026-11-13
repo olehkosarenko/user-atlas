@@ -3,6 +3,7 @@
     <description>Coding standards for the User Atlas plugin.</description>
 
     <file>./user-atlas.php</file>
+    <file>./uninstall.php</file>
     <file>./src</file>
 
     <exclude-pattern>/vendor/*</exclude-pattern>

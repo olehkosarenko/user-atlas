@@ -27,13 +27,6 @@ class AdminController {
 	private object $setting;
 
 	/**
-	 * Cache Manager instance.
-	 *
-	 * @var object CacheManager
-	 */
-	private object $cacheManager;
-
-	/**
 	 * Controller constructor.
 	 *
 	 * @param AdminSetting|null $setting Settings instance.
@@ -54,5 +47,7 @@ class AdminController {
 
 		add_action( 'admin_menu', [ $this->setting, 'menu' ] );
 		add_action( 'admin_init', [ $this->setting, 'fields' ] );
+		add_action( 'admin_post_user_atlas_clear_cache', [ $this->setting, 'clearCache' ] );
+		add_action( 'admin_notices', [ $this->setting, 'cacheClearedNotice' ] );
 	}
 }

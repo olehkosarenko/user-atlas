@@ -97,7 +97,7 @@ function App() {
 	};
 
 	return (
-		<div className="wrapper">
+		<div className="user-atlas">
 			<div className="container">
 				<div className="row">
 					<div className="col">
@@ -129,7 +129,9 @@ function App() {
 						{ expiration && (
 							<Expiration expiration={ expiration } />
 						) }
-						{ error && <p className="error">{ error }</p> }
+						{ error && (
+							<p className="user-atlas__error">{ error }</p>
+						) }
 						{ loadUsersButtonDisplay && (
 							<Button
 								title="Load Users Table"

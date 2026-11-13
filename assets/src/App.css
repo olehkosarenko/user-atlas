@@ -1,8 +1,8 @@
-.wrapper {
+.user-atlas {
 	padding: 60px 0;
 }
 
-.error {
+.user-atlas__error {
 	color: #f00;
 	font-weight: 700;
 }

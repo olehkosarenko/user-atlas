@@ -1,17 +1,17 @@
-.loader-wrapp {
+.user-atlas__loader {
 	display: flex;
 	justify-content: center;
 	align-items: center;
 }
 
-.loader {
+.user-atlas__loader-dots {
 	display: inline-block;
 	position: relative;
 	width: 80px;
 	height: 80px;
 }
 
-.loader div {
+.user-atlas__loader-dots div {
 	position: absolute;
 	top: 33px;
 	width: 13px;
@@ -21,27 +21,27 @@
 	animation-timing-function: cubic-bezier(0, 1, 1, 0);
 }
 
-.loader div:nth-child(1) {
+.user-atlas__loader-dots div:nth-child(1) {
 	left: 8px;
-	animation: loader1 0.6s infinite;
+	animation: user-atlas-loader-1 0.6s infinite;
 }
 
-.loader div:nth-child(2) {
+.user-atlas__loader-dots div:nth-child(2) {
 	left: 8px;
-	animation: loader2 0.6s infinite;
+	animation: user-atlas-loader-2 0.6s infinite;
 }
 
-.loader div:nth-child(3) {
+.user-atlas__loader-dots div:nth-child(3) {
 	left: 32px;
-	animation: loader2 0.6s infinite;
+	animation: user-atlas-loader-2 0.6s infinite;
 }
 
-.loader div:nth-child(4) {
+.user-atlas__loader-dots div:nth-child(4) {
 	left: 56px;
-	animation: loader3 0.6s infinite;
+	animation: user-atlas-loader-3 0.6s infinite;
 }
 
-@keyframes loader1 {
+@keyframes user-atlas-loader-1 {
 
 	0% {
 		transform: scale(0);
@@ -53,7 +53,7 @@
 
 }
 
-@keyframes loader3 {
+@keyframes user-atlas-loader-3 {
 
 	0% {
 		transform: scale(1);
@@ -65,7 +65,7 @@
 
 }
 
-@keyframes loader2 {
+@keyframes user-atlas-loader-2 {
 
 	0% {
 		transform: translate(0, 0);

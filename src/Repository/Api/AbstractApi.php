@@ -28,6 +28,11 @@ abstract class AbstractApi {
 	protected const REQUEST_TIMEOUT = 3;
 
 	/**
+	 * Exception code for failures that mean the API itself is unavailable.
+	 */
+	protected const API_UNAVAILABLE = 1;
+
+	/**
 	 * API cache instance.
 	 *
 	 * @var ApiCache
@@ -76,6 +81,19 @@ abstract class AbstractApi {
 	}
 
 	/**
+	 * Check whether a response code means the API itself is failing
+	 *
+	 * A 404 or another client error concerns one resource, so it must not pause the whole API.
+	 *
+	 * @param int $code HTTP response code.
+	 *
+	 * @return bool
+	 */
+	protected function isServerFailure( int $code ): bool {
+		return 429 === $code || $code >= 500;
+	}
+
+	/**
 	 * Send request to API
 	 *
 	 * @param string $url URL.
@@ -93,35 +111,46 @@ abstract class AbstractApi {
 			return $cached['content'];
 		}
 
+		if ( $this->cache->isPaused() ) {
+			return [
+				'status'  => 'error',
+				'message' => 'API is temporarily unavailable, please try again later',
+			];
+		}
+
 		$content = [];
 		$error   = [];
 		try {
 			$response = wp_remote_get( self::API_URL . $url, [ 'timeout' => $this->timeout() ] );
 			if ( is_wp_error( $response ) ) {
-				throw new \Exception( $response->get_error_message() );
+				throw new \Exception( $response->get_error_message(), self::API_UNAVAILABLE );
 			}
 
 			$response_code = wp_remote_retrieve_response_code( $response );
 			if ( 200 !== $response_code ) {
 				throw new \Exception(
-					'Invalid response code: ' . $response_code
+					'Invalid response code: ' . $response_code,
+					$this->isServerFailure( (int) $response_code ) ? self::API_UNAVAILABLE : 0
 				);
 			}
 
 			$body = wp_remote_retrieve_body( $response );
 			if ( empty( $body ) ) {
-				throw new \Exception( 'Empty response body' );
+				throw new \Exception( 'Empty response body', self::API_UNAVAILABLE );
 			}
 
 			$content = json_decode( $body, true );
 			if ( ! is_array( $content ) ) {
-				throw new \Exception( 'Invalid JSON' );
+				throw new \Exception( 'Invalid JSON', self::API_UNAVAILABLE );
 			}
 		} catch ( \Exception $err ) {
 			$error = [
 				'status'  => 'error',
 				'message' => $err->getMessage(),
 			];
+			if ( self::API_UNAVAILABLE === $err->getCode() ) {
+				$this->cache->pause( $err->getMessage() );
+			}
 		}
 
 		if ( ! empty( $error ) ) {

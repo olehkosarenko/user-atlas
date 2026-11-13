@@ -35,6 +35,13 @@ class ApiCache {
 	private const KEY_PREFIX = 'user_atlas_api_';
 
 	/**
+	 * Transient that marks the API as temporarily unavailable.
+	 *
+	 * @var string
+	 */
+	public const PAUSE_KEY = 'user_atlas_api_paused';
+
+	/**
 	 * Get a cached response
 	 *
 	 * @param string $path API request path.
@@ -89,6 +96,42 @@ class ApiCache {
 		$ttl = (int) apply_filters( 'user_atlas__cache_ttl', HOUR_IN_SECONDS );
 
 		return max( 1, $ttl );
+	}
+
+	/**
+	 * Check whether API requests are paused after a failure
+	 *
+	 * @return bool
+	 */
+	public function isPaused(): bool {
+		return false !== get_transient( self::PAUSE_KEY );
+	}
+
+	/**
+	 * Pause API requests after a failure
+	 *
+	 * @param string $message Error message of the failed request.
+	 *
+	 * @return void
+	 */
+	public function pause( string $message ): void {
+		set_transient( self::PAUSE_KEY, $message, $this->pauseDuration() );
+	}
+
+	/**
+	 * Get how long API requests stay paused after a failure
+	 *
+	 * @return int
+	 */
+	public function pauseDuration(): int {
+		/**
+		 * Filters how long API requests are paused after a failed request.
+		 *
+		 * @param int $duration Duration in seconds. Default one minute.
+		 */
+		$duration = (int) apply_filters( 'user_atlas__failure_pause', MINUTE_IN_SECONDS );
+
+		return max( 1, $duration );
 	}
 
 	/**

@@ -9,7 +9,7 @@
 - WordPress 6.6 or later
 - PHP 7.4 or later
 - [Composer](https://getcomposer.org/)
-- Node.js 20.19 or later and npm, to build the frontend
+- Node.js 26 LTS (see `assets/.nvmrc`) and npm, to build the frontend
 
 ## Installation
 
@@ -62,8 +62,11 @@ The same check runs in GitHub Actions on every pull request and on pushes to `ma
 
 The frontend is a React app built with [`@wordpress/scripts`](https://developer.wordpress.org/block-editor/reference-guides/packages/packages-scripts/). The source is in `assets/src`, the build goes to `assets/build`. React comes from WordPress (`wp-element`), it is not bundled.
 
+Run `nvm use` in `assets/` to switch to the Node.js version from `.nvmrc`.
+
 ```sh
 cd assets
+nvm use
 npm ci
 npm run build      # production build
 npm start          # rebuild on every change

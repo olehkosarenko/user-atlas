@@ -38,11 +38,26 @@ Settings live in **Settings > User Atlas**:
 - **Endpoint** - the page slug, `user-atlas` by default
 - **Title** - the page title, `User Atlas` by default
 
+### Caching
+
+Successful API responses are cached in transients for one hour, so repeated requests do not call the API. When the site has a persistent object cache, the transients are stored there. Errors are never cached.
+
+Administrators see when the cached data expires below the table. To load fresh data right away, use **Clear cache** in **Settings > User Atlas**.
+
+Requests time out after 3 seconds. If the API fails (timeout, connection error, 429 or 5xx response), the plugin stops calling it for one minute and shows an error instead; cached data is still served. A 404 for a single resource does not pause the API.
+
 ### Filters
 
 - `user_atlas__endpoint` - change the page slug
 - `user_atlas__title` - change the page title
 - `user_atlas__global_args` - change the data passed to the frontend (`window.global_user_atlas`)
+- `user_atlas__cache_ttl` - how long API responses are cached, in seconds (default `3600`)
+- `user_atlas__request_timeout` - API request timeout, in seconds (default `3`)
+- `user_atlas__failure_pause` - how long API requests are paused after a failure, in seconds (default `60`)
+
+### Uninstall
+
+Deleting the plugin removes its settings and cache version. Cached API responses expire on their own.
 
 ## Development
 

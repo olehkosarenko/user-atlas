@@ -1,20 +1,21 @@
+const isObject = ( value ) => typeof value === 'object' && value !== null;
+
 export default function flattenJSON( obj, parentKey = '' ) {
 	let result = [];
-	for ( let key in obj ) {
+	for ( const key in obj ) {
 		if ( ! obj.hasOwnProperty( key ) ) {
 			continue;
 		}
 
-		let newKey = parentKey ? `${ key }` : key;
-		if ( typeof obj[ key ] === 'object' && obj[ key ] !== null ) {
-			result = result.concat( flattenJSON( obj[ key ], newKey ) );
+		const newKey = parentKey ? `${ parentKey }.${ key }` : key;
+		const value = obj[ key ];
+
+		if ( Array.isArray( value ) && ! value.some( isObject ) ) {
+			result.push( [ newKey, value.join( ', ' ) ] );
+		} else if ( isObject( value ) ) {
+			result = result.concat( flattenJSON( value, newKey ) );
 		} else {
-			result.push( [
-				newKey,
-				Array.isArray( obj[ key ] )
-					? obj[ key ].join( ', ' )
-					: String( obj[ key ] ),
-			] );
+			result.push( [ newKey, String( value ) ] );
 		}
 	}
 	return result;

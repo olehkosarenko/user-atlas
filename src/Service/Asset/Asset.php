@@ -20,11 +20,18 @@ defined( 'ABSPATH' ) || die();
  */
 class Asset {
 	/**
-	 * Pathes.
+	 * Script and style handle.
 	 *
-	 * @var array $pathes Pathes.
+	 * @var string
 	 */
-	private array $pathes;
+	public const HANDLE = 'user-atlas';
+
+	/**
+	 * Build directory relative to the plugin root.
+	 *
+	 * @var string
+	 */
+	private const BUILD_DIR = 'assets/build/';
 
 	/**
 	 * Options instance.
@@ -42,7 +49,6 @@ class Asset {
 	 */
 	public function __construct( Option $option = null ) {
 		$this->option = $option ?? Option::instance();
-		$this->pathes = [];
 	}
 
 	/**
@@ -64,80 +70,42 @@ class Asset {
 	}
 
 	/**
-	 * Add patches
-	 *
-	 * @return void
-	 */
-	public function addPatches(): void {
-		$this->pathes = [
-			'pluginDirUrl'    => plugin_dir_url( WP_APP_USER_ATLAS_FILE ),
-			'entryPointsFile' => plugin_dir_path( WP_APP_USER_ATLAS_FILE ) . '/assets/build/asset-manifest.json',
-		];
-	}
-
-	/**
-	 * Check if manifest file exists and is readable
-	 *
-	 * @return bool
-	 */
-	public function isManifestReadable(): bool {
-		$status = true;
-
-		if ( ! isset( $this->pathes['entryPointsFile'] ) ) {
-			$status = false;
-		}
-
-		if ( ! file_exists( $this->pathes['entryPointsFile'] ) ) {
-			$status = false;
-		}
-
-		if ( ! is_readable( $this->pathes['entryPointsFile'] ) ) {
-			$status = false;
-		}
-
-		return $status;
-	}
-
-	/**
 	 * Register the scripts and stylesheets
 	 *
 	 * @return void
-	 *
-	 * phpcs:disable WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
 	 */
 	public function enqueueScripts(): void {
-		$this->addPatches();
-		if ( ! $this->isManifestReadable() ) {
+		$buildPath = plugin_dir_path( WP_APP_USER_ATLAS_FILE ) . self::BUILD_DIR;
+		$assetFile = $buildPath . 'index.asset.php';
+		if ( ! is_readable( $assetFile ) ) {
 			return;
 		}
 
-		$globalArgs  = $this->globalArgs();
-		$entryPoints = json_decode( file_get_contents( $this->pathes['entryPointsFile'] ), true );
-		foreach ( $entryPoints['entrypoints'] as $entryPoint ) {
-			if ( str_contains( $entryPoint, '.js' ) ) {
-				wp_enqueue_script(
-					'user_atlas-' . sanitize_title( $entryPoint ),
-					$this->pathes['pluginDirUrl'] . '/assets/build/' . $entryPoint,
-					[],
-					time(),
-					[ 'in_footer' => true ]
-				);
+		$asset    = require $assetFile;
+		$buildUrl = plugin_dir_url( WP_APP_USER_ATLAS_FILE ) . self::BUILD_DIR;
 
-				wp_add_inline_script(
-					'user_atlas-' . sanitize_title( $entryPoint ),
-					'var global_user_atlas = ' . wp_json_encode( $globalArgs ),
-					'before'
-				);
-			}
+		wp_enqueue_script(
+			self::HANDLE,
+			$buildUrl . 'index.js',
+			$asset['dependencies'],
+			$asset['version'],
+			[ 'in_footer' => true ]
+		);
 
-			if ( str_contains( $entryPoint, '.css' ) ) {
-				wp_enqueue_style(
-					'user_atlas-' . sanitize_title( $entryPoint ),
-					$this->pathes['pluginDirUrl'] . '/assets/build/' . $entryPoint,
-					[],
-					time()
-				);
-			}
+		wp_add_inline_script(
+			self::HANDLE,
+			'var global_user_atlas = ' . wp_json_encode( $this->globalArgs() ) . ';',
+			'before'
+		);
+
+		if ( is_readable( $buildPath . 'index.css' ) ) {
+			wp_enqueue_style(
+				self::HANDLE,
+				$buildUrl . 'index.css',
+				[],
+				$asset['version']
+			);
+			wp_style_add_data( self::HANDLE, 'rtl', 'replace' );
 		}
 	}
 }

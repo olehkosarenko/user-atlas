@@ -76,7 +76,7 @@ class LoadPage {
 	 */
 	public function loadTemplate(): void {
 		get_header( 'embed' );
-		echo '<div id="root"></div>';
+		echo '<div id="user-atlas-root"></div>';
 		get_footer( 'embed' );
 		$this->exit();
 	}

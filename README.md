@@ -1,29 +1,65 @@
 # User Atlas
 
-**User Atlas** is an interactive WordPress plugin that displays users in a dynamic table.
+[![Lint](https://github.com/olehkosarenko/user-atlas/actions/workflows/lint.yml/badge.svg)](https://github.com/olehkosarenko/user-atlas/actions/workflows/lint.yml)
 
-## Code Quality Checks
+**User Atlas** is a WordPress plugin that shows users from an external API in a dynamic React table on a dedicated page of your site.
 
-Before running the plugin, ensure that your PHP code follows the WordPress coding standards and is free from syntax errors.
+## Requirements
 
-### Check PHP CodeSniffer (PHPCS) and PHP Syntax
+- WordPress 6.6 or later
+- PHP 7.4 or later
+- [Composer](https://getcomposer.org/)
+- Node.js and npm, only if you change the frontend
 
-Install the necessary Composer dependencies:
+## Installation
 
-```sh
-composer require wp-coding-standards/wpcs
-composer require squizlabs/php_codesniffer
-```
-
-Run the following command to analyze your code:
+The `vendor/` directory is not committed, so install the Composer dependencies after cloning. Without them the plugin does not load.
 
 ```sh
-vendor/bin/phpcs
+cd wp-content/plugins
+git clone https://github.com/olehkosarenko/user-atlas.git
+cd user-atlas
+composer install --no-dev
 ```
 
-## Build Process
+Use `composer install` without `--no-dev` if you also want the development tools (PHPCS).
 
-Navigate to the `assets` directory. Then, install dependencies and build the project:
+The compiled frontend in `assets/build/` is committed, so no build step is needed to run the plugin.
+
+Then activate **User Atlas** in **Plugins**.
+
+## Usage
+
+Open `/user-atlas/` on your site, for example `https://example.com/user-atlas/`.
+
+Settings live in **Settings > User Atlas**:
+
+- **Endpoint** - the page slug, `user-atlas` by default
+- **Title** - the page title, `User Atlas` by default
+
+### Filters
+
+- `user_atlas__endpoint` - change the page slug
+- `user_atlas__title` - change the page title
+- `user_atlas__global_args` - change the data passed to the frontend (`window.global_user_atlas`)
+
+## Development
+
+### PHP coding standards
+
+The PHP code follows the [WordPress Coding Standards](https://developer.wordpress.org/coding-standards/wordpress-coding-standards/php/) and is checked for PHP version compatibility. The rules are in `phpcs.xml.dist`.
+
+```sh
+composer install
+composer lint       # check the code with PHPCS
+composer lint:fix   # fix what can be fixed automatically with PHPCBF
+```
+
+The same check runs in GitHub Actions on every pull request and on pushes to `main`.
+
+### Frontend
+
+The frontend source is in `assets/src`. To rebuild it:
 
 ```sh
 cd assets
@@ -31,15 +67,13 @@ npm install
 npm run build
 ```
 
-## Available Commands
-
-You can use the following commands for code quality checks and optimizations:
-
-- **`npm run lint:css`** – Checks all SASS files against the [WordPress CSS Coding Standards](https://developer.wordpress.org/coding-standards/wordpress-coding-standards/css/).
-- **`npm run lint:js`** – Checks all JavaScript files against the [WordPress JavaScript Coding Standards](https://developer.wordpress.org/coding-standards/wordpress-coding-standards/javascript/).  
+Lint the frontend code:
 
 ```sh
-cd assets
-npm run lint:css
-npm run lint:js
+npm run lint:js    # WordPress JavaScript Coding Standards
+npm run lint:css   # WordPress CSS Coding Standards
 ```
+
+## License
+
+GPL-3.0-or-later

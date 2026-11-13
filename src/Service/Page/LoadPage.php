@@ -66,7 +66,7 @@ class LoadPage {
 	 * phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter.Found
 	 */
 	public function changeTitle( ?string $title = '' ): string {
-		return $this->option->option( 'title', 'User Atlas' );
+		return $this->option->get( 'title', 'User Atlas' );
 	}
 
 	/**

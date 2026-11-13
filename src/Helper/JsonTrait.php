@@ -2,7 +2,7 @@
 /**
  * The Json class
  *
- * @package WP_Rocket\Helpers\CacheTracker\Data
+ * @package WpApp\UserAtlas\Helper
  */
 
 namespace WpApp\UserAtlas\Helper;
@@ -43,7 +43,7 @@ trait JsonTrait {
 			return [];
 		}
 
-		$data = file_get_contents( $file );
+		$data = file_get_contents( $file ); // phpcs:ignore WordPressVIPMinimum.Performance.FetchingRemoteData.FileGetContentsUnknown -- Reads the bundled config.json, not a remote URL.
 		$arr  = json_decode( $data, true );
 
 		return is_array( $arr ) ? $arr : [];

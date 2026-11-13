@@ -47,5 +47,7 @@ class AdminController {
 
 		add_action( 'admin_menu', [ $this->setting, 'menu' ] );
 		add_action( 'admin_init', [ $this->setting, 'fields' ] );
+		add_action( 'admin_post_user_atlas_clear_cache', [ $this->setting, 'clearCache' ] );
+		add_action( 'admin_notices', [ $this->setting, 'cacheClearedNotice' ] );
 	}
 }

@@ -135,6 +135,18 @@ class ApiCache {
 	}
 
 	/**
+	 * Clear all cached responses and lift a pause
+	 *
+	 * Bumping the version makes every stored response unreachable; the old transients expire on their own.
+	 *
+	 * @return void
+	 */
+	public function clear(): void {
+		update_option( self::VERSION_OPTION, $this->version() + 1 );
+		delete_transient( self::PAUSE_KEY );
+	}
+
+	/**
 	 * Get the current cache version
 	 *
 	 * @return int

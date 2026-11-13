@@ -97,4 +97,4 @@ GitHub Actions runs the linters, the unit tests and the build on every pull requ
 
 ## License
 
-GPL-3.0-or-later
+[GPL-2.0-or-later](LICENSE)

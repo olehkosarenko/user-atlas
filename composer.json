@@ -1,21 +1,20 @@
 {
-    "name": "wpapp/user-tables",
+    "name": "wpapp/user-atlas",
     "description": "This plugin displays users in a dynamic table.",
     "type": "wordpress-plugin",
-    "license": "GPL-3.0+",
+    "license": "GPL-2.0-or-later",
     "authors": [
         {
             "name": "Oleh Kosarenko",
-            "email": "kosarenko.oleh@gmail.com"
+            "homepage": "https://github.com/olehkosarenko"
         }
     ],
     "support": {
-        "src": "https://github.com/olehkosarenko/user-tables",
-        "issues": "https://github.com/olehkosarenko/user-tables/issues"
+        "source": "https://github.com/olehkosarenko/user-atlas",
+        "issues": "https://github.com/olehkosarenko/user-atlas/issues"
     },
     "require": {
-        "php": ">=7.4",
-        "psr/log": "~1.0"
+        "php": ">=7.4"
     },
     "autoload": {
         "psr-4": {

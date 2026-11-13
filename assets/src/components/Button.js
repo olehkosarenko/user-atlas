@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 function Button( { title, onClick } ) {
 	return (
 		<button
+			type="button"
 			className="user-atlas__button"
 			onClick={ ( event ) => onClick( event ) }
 		>

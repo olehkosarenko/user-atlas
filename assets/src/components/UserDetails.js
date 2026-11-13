@@ -3,12 +3,20 @@ import UserDetail from './UserDetail';
 
 function UsersDetails( { details } ) {
 	return (
-		<div className="user-atlas__table-wrap">
+		<div
+			className="user-atlas__table-wrap"
+			role="region"
+			aria-label="User details"
+			tabIndex="0"
+		>
 			<table className="user-atlas__table">
+				<caption className="user-atlas__screen-reader-text">
+					User details
+				</caption>
 				<thead>
 					<tr>
-						<th>Param</th>
-						<th>Value</th>
+						<th scope="col">Field</th>
+						<th scope="col">Value</th>
 					</tr>
 				</thead>
 				<tbody>

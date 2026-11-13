@@ -76,3 +76,10 @@
 	}
 
 }
+
+@media (prefers-reduced-motion: reduce) {
+
+	.user-atlas__loader-dots div {
+		animation: none;
+	}
+}

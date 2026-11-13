@@ -5,14 +5,7 @@ function UserItem( { user, onClick } ) {
 
 	return (
 		<tr>
-			<td>
-				<a
-					href={ userHref }
-					onClick={ ( event ) => onClick( event, user.id ) }
-				>
-					{ user.id }
-				</a>
-			</td>
+			<td>{ user.id }</td>
 			<td>
 				<a
 					href={ userHref }
@@ -21,14 +14,7 @@ function UserItem( { user, onClick } ) {
 					{ user.name }
 				</a>
 			</td>
-			<td>
-				<a
-					href={ userHref }
-					onClick={ ( event ) => onClick( event, user.id ) }
-				>
-					{ user.username }
-				</a>
-			</td>
+			<td>{ user.username }</td>
 		</tr>
 	);
 }

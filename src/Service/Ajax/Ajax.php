@@ -124,6 +124,7 @@ class Ajax {
 	 */
 	public function send(): array {
 		try {
+			$data        = null;
 			$cmd         = $this->args['cmd'];
 			$params      = array_diff_key( $this->args, [ 'cmd' => '' ] );
 			$reflection  = new \ReflectionMethod( $this->api, $cmd );
@@ -137,7 +138,7 @@ class Ajax {
 				throw new \Exception( 'Invalid number of parameters' );
 			}
 
-			if ( empty( $data ) ) {
+			if ( null === $data ) {
 				throw new \Exception( 'No data found' );
 			}
 		} catch ( \ReflectionException $error ) {

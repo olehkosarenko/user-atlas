@@ -55,7 +55,7 @@ class Option {
 	 *
 	 * @return string
 	 */
-	public function option( string $key, string $defaultValue = '' ): string {
+	public function get( string $key, string $defaultValue = '' ): string {
 		if ( ! empty( $this->options[ $key ] ) ) {
 			return $this->options[ $key ];
 		}

@@ -48,7 +48,7 @@ class CheckPage {
 	 */
 	public function __construct( Option $option = null ) {
 		$this->option = $option ?? Option::instance();
-		$this->setSlug( $this->option->option( 'endpoint', 'user-atlas' ) );
+		$this->setSlug( $this->option->get( 'endpoint', 'user-atlas' ) );
 		// phpcs:disable WordPress.Security.ValidatedSanitizedInput.MissingUnslash
 		// phpcs:disable WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 		$this->request = ! empty( $_SERVER['REQUEST_URI'] ) ?

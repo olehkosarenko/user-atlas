@@ -57,7 +57,7 @@ class Asset {
 	 * @return array
 	 */
 	public function globalArgs(): array {
-		$title      = $this->option->option( 'title', 'User Atlas' );
+		$title      = $this->option->get( 'title', 'User Atlas' );
 		$title      = apply_filters( 'user_atlas__title', $title );
 		$globalArgs = [
 			'ajaxUrl'     => admin_url( 'admin-ajax.php' ),

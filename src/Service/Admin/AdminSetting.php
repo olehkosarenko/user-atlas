@@ -102,7 +102,7 @@ class AdminSetting {
 	public function fields(): void {
 		register_setting( 'user_atlas__group', 'user_atlas__options', [ $this->prepareOption, 'sanitize' ] );
 		add_settings_section( 'user_atlas__section_main', 'Options', '', $this->plugin->getSlug() );
-		$endpoint = $this->option->option( 'endpoint', 'user-atlas' );
+		$endpoint = $this->option->get( 'endpoint', 'user-atlas' );
 		$endpoint = apply_filters( 'user_atlas__endpoint', $endpoint );
 
 		add_settings_field(
@@ -136,7 +136,7 @@ class AdminSetting {
 	 * @return void
 	 */
 	public function fieldInputEndpoint(): void {
-		$value = $this->option->option( 'endpoint' );
+		$value = $this->option->get( 'endpoint' );
 		?>
 		<input type="text" name="user_atlas__options[endpoint]" value="<?php echo esc_attr( $value ); ?>"/>
 		<?php
@@ -148,7 +148,7 @@ class AdminSetting {
 	 * @return void
 	 */
 	public function fieldInputTitle(): void {
-		$value = $this->option->option( 'title' );
+		$value = $this->option->get( 'title' );
 		?>
 		<input type="text" name="user_atlas__options[title]" value="<?php echo esc_attr( $value ); ?>"/>
 		<?php
@@ -160,7 +160,7 @@ class AdminSetting {
 	 * @return void
 	 */
 	public function fieldLabelLastUpdate(): void {
-		$value = $this->option->option( 'last_update' );
+		$value = $this->option->get( 'last_update' );
 		if ( ! empty( $value ) && $value > 0 ) {
 			echo esc_html( gmdate( 'Y-m-d H:i:s', intval( $value ) ) );
 		}

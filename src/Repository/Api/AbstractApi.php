@@ -21,6 +21,27 @@ abstract class AbstractApi {
 	protected const API_URL = 'https://jsonplaceholder.typicode.com/';
 
 	/**
+	 * Default request timeout in seconds
+	 */
+	protected const REQUEST_TIMEOUT = 3;
+
+	/**
+	 * Get the request timeout in seconds
+	 *
+	 * @return int
+	 */
+	public function timeout(): int {
+		/**
+		 * Filters the API request timeout.
+		 *
+		 * @param int $timeout Timeout in seconds. Default 3.
+		 */
+		$timeout = (int) apply_filters( 'user_atlas__request_timeout', self::REQUEST_TIMEOUT );
+
+		return max( 1, $timeout );
+	}
+
+	/**
 	 * Send request to API
 	 *
 	 * @param string $url URL.
@@ -33,7 +54,7 @@ abstract class AbstractApi {
 		$error   = [];
 		$url     = self::API_URL . $url;
 		try {
-			$response = wp_remote_get( $url );
+			$response = wp_remote_get( $url, [ 'timeout' => $this->timeout() ] );
 			if ( is_wp_error( $response ) ) {
 				throw new \Exception( $response->get_error_message() );
 			}

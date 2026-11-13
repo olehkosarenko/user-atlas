@@ -1,6 +1,5 @@
 import { useMemo, useEffect, useState, useCallback } from '@wordpress/element';
-import './App.css';
-import 'bootstrap/dist/css/bootstrap.min.css';
+import './scss/main.scss';
 import Header from './components/Header';
 import UsersTable from './components/UsersTable';
 import UserDetails from './components/UserDetails';
@@ -97,54 +96,48 @@ function App() {
 	};
 
 	return (
-		<div className="wrapper">
-			<div className="container">
-				<div className="row">
-					<div className="col">
-						<Header title={ mainObject.title } />
-						{ users.length > 0 && usersDisplay && (
-							<UsersTable
-								users={ users }
-								openDetailsClick={ handleOpenDetailsClick }
-							/>
-						) }
-						{ ! users.length &&
-							usersDisplay &&
-							! detailsDisplay &&
-							! error &&
-							! loadingDisplay && (
-								<div>
-									<p>No users found</p>
-									{ ! loadUsersButtonDisplay && (
-										<Button
-											title="Reload Users Table"
-											onClick={ handleUsersLoadButton }
-										/>
-									) }
-								</div>
+		<div className="user-atlas">
+			<div className="user-atlas__container">
+				<Header title={ mainObject.title } />
+				{ users.length > 0 && usersDisplay && (
+					<UsersTable
+						users={ users }
+						openDetailsClick={ handleOpenDetailsClick }
+					/>
+				) }
+				{ ! users.length &&
+					usersDisplay &&
+					! detailsDisplay &&
+					! error &&
+					! loadingDisplay && (
+						<div>
+							<p>No users found</p>
+							{ ! loadUsersButtonDisplay && (
+								<Button
+									title="Reload Users Table"
+									onClick={ handleUsersLoadButton }
+								/>
 							) }
-						{ details.length > 0 && detailsDisplay && (
-							<UserDetails details={ details } />
-						) }
-						{ expiration && (
-							<Expiration expiration={ expiration } />
-						) }
-						{ error && <p className="error">{ error }</p> }
-						{ loadUsersButtonDisplay && (
-							<Button
-								title="Load Users Table"
-								onClick={ handleUsersLoadButton }
-							/>
-						) }
-						{ loadDetailsButtonDisplay && (
-							<Button
-								title="Reload User Details"
-								onClick={ handleDetailsLoadButton }
-							/>
-						) }
-						{ loadingDisplay && <Loader /> }
-					</div>
-				</div>
+						</div>
+					) }
+				{ details.length > 0 && detailsDisplay && (
+					<UserDetails details={ details } />
+				) }
+				{ expiration && <Expiration expiration={ expiration } /> }
+				{ error && <p className="user-atlas__error">{ error }</p> }
+				{ loadUsersButtonDisplay && (
+					<Button
+						title="Load Users Table"
+						onClick={ handleUsersLoadButton }
+					/>
+				) }
+				{ loadDetailsButtonDisplay && (
+					<Button
+						title="Reload User Details"
+						onClick={ handleDetailsLoadButton }
+					/>
+				) }
+				{ loadingDisplay && <Loader /> }
 			</div>
 		</div>
 	);

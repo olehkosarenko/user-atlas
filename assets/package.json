@@ -11,13 +11,12 @@
 		"build": "wp-scripts build",
 		"start": "wp-scripts start",
 		"lint:js": "wp-scripts lint-js src",
-		"lint:css": "wp-scripts lint-style \"src/**/*.css\"",
+		"lint:css": "wp-scripts lint-style \"src/**/*.{css,scss}\"",
 		"format": "wp-scripts format src",
 		"test": "wp-scripts test-unit-js"
 	},
 	"dependencies": {
 		"@wordpress/element": "^10.1.0",
-		"bootstrap": "^5.3.9",
 		"prop-types": "^15.8.1"
 	},
 	"devDependencies": {

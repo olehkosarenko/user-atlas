@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 
 function Expiration( { expiration } ) {
 	return (
-		<div className="alert alert-light">
+		<div className="user-atlas__notice">
 			<b>Cache Expiry Time:</b> { expiration }
 		</div>
 	);

@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 
 const Header = ( { title } ) => (
-	<header className="header">
+	<header className="user-atlas__header">
 		<h1>{ title }</h1>
 	</header>
 );

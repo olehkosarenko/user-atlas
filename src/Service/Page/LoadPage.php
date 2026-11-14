@@ -63,7 +63,7 @@ class LoadPage {
 	 *
 	 * @return string
 	 */
-	public function changeTitle( ?string $title = '' ): string { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.Found -- The filter passes the current title, which is replaced.
+	public function changeTitle( ?string $title = '' ): string {
 		$title = $this->option->get( 'title', 'User Atlas' );
 
 		/**

@@ -9,15 +9,17 @@ declare( strict_types=1 );
 
 namespace WpApp\UserAtlas\Repository\Api;
 
+use WP_Error;
+
 defined( 'ABSPATH' ) || die();
 
 trait UsersApi {
 	/**
 	 * Returns all users
 	 *
-	 * @return array
+	 * @return array|WP_Error
 	 */
-	public function users(): array {
+	public function users() {
 		$url = 'users';
 
 		return $this->send( $url );
@@ -27,8 +29,10 @@ trait UsersApi {
 	 * Returns a single user
 	 *
 	 * @param int $id User ID.
+	 *
+	 * @return array|WP_Error
 	 */
-	public function user( int $id ): array {
+	public function user( int $id ) {
 		$url = 'users/' . $id;
 
 		return $this->send( $url );

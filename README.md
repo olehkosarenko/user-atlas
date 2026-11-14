@@ -49,11 +49,11 @@ The routes need no nonce, so the page keeps working when its HTML is served from
 
 ### Caching
 
-Successful API responses are cached in transients for one hour, so repeated requests do not call the API. When the site has a persistent object cache, the transients are stored there. Errors are never cached.
+Successful API responses are cached in transients for one hour, so repeated requests do not call the API. When the site has a persistent object cache, the transients are stored there. Errors are never cached. A single user is requested from the API only when its ID is in the cached list, so unknown IDs answer `404` without an API call or a new cache entry.
 
 Administrators see when the cached data expires below the table. To load fresh data right away, use **Clear cache** in **Settings > User Atlas**.
 
-Requests time out after 3 seconds. If the API fails (timeout, connection error, 429 or 5xx response), the plugin stops calling it for one minute and shows an error instead; cached data is still served. A 404 for a single resource does not pause the API.
+Requests time out after 3 seconds. If the API fails (timeout, connection error, 429 or 5xx response), the plugin stops calling it for one minute and answers `503`; cached data is still served. A 404 for a single resource does not pause the API. Visitors only see a generic error message, never the technical reason.
 
 ### Filters
 

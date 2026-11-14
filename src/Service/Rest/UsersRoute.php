@@ -96,24 +96,41 @@ class UsersRoute {
 	/**
 	 * Get a single user
 	 *
+	 * The ID is checked against the cached list first, so an unknown ID never
+	 * reaches the external API and never adds a cache entry.
+	 *
 	 * @param WP_REST_Request $request Request.
 	 *
 	 * @return WP_REST_Response|WP_Error
 	 */
 	public function user( WP_REST_Request $request ) {
-		return $this->respond( $this->api()->user( (int) $request['id'] ) );
+		$id    = (int) $request['id'];
+		$users = $this->api()->users();
+		if ( is_wp_error( $users ) ) {
+			return $users;
+		}
+
+		if ( ! in_array( $id, array_map( 'intval', array_column( $users, 'id' ) ), true ) ) {
+			return new WP_Error(
+				'user_atlas_not_found',
+				__( 'User not found.', 'user-atlas' ),
+				[ 'status' => 404 ]
+			);
+		}
+
+		return $this->respond( $this->api()->user( $id ) );
 	}
 
 	/**
 	 * Turn an API result into a REST response
 	 *
-	 * @param array $content API result.
+	 * @param array|WP_Error $content API result.
 	 *
 	 * @return WP_REST_Response|WP_Error
 	 */
-	private function respond( array $content ) {
-		if ( isset( $content['status'], $content['message'] ) && 'error' === $content['status'] ) {
-			return new WP_Error( 'user_atlas_api_error', $content['message'], [ 'status' => 502 ] );
+	private function respond( $content ) {
+		if ( is_wp_error( $content ) ) {
+			return $content;
 		}
 
 		$data       = [ 'content' => $content ];

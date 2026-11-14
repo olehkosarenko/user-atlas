@@ -38,6 +38,15 @@ Settings live in **Settings > User Atlas**:
 - **Endpoint** - the page slug, `user-atlas` by default
 - **Title** - the page title, `User Atlas` by default
 
+### REST API
+
+The page loads its data from two public, read-only REST routes:
+
+- `GET /wp-json/user-atlas/v1/users` - the list of users
+- `GET /wp-json/user-atlas/v1/users/<id>` - a single user
+
+The routes need no nonce, so the page keeps working when its HTML is served from a page cache.
+
 ### Caching
 
 Successful API responses are cached in transients for one hour, so repeated requests do not call the API. When the site has a persistent object cache, the transients are stored there. Errors are never cached.

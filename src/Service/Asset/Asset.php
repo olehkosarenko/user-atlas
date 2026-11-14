@@ -61,8 +61,6 @@ class Asset {
 		$title      = $this->option->get( 'title', 'User Atlas' );
 		$title      = apply_filters( 'user_atlas__title', $title );
 		$globalArgs = [
-			'ajaxUrl'     => admin_url( 'admin-ajax.php' ),
-			'nonce'       => wp_create_nonce( 'user_atlas-nonce' ),
 			'title'       => $title,
 			'isUserAdmin' => current_user_can( 'manage_options' ),
 			'restUrl'     => esc_url_raw( rest_url( UsersRoute::REST_NAMESPACE . '/' ) ),

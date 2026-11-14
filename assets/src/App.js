@@ -8,6 +8,7 @@ import Expiration from './components/Expiration';
 import Loader from './components/Loader/Loader';
 import MainObject from './utils/mainObject';
 import flattenJSON from './utils/flattenJSON';
+import request from './utils/request';
 
 function App() {
 	const mainObject = useMemo( () => new MainObject(), [] );
@@ -29,40 +30,25 @@ function App() {
 			setLoadingDisplay( true );
 			setError( null );
 			setExpiration( null );
+			setLoadDetailsButtonDisplay( false );
 			try {
-				const response = await fetch( url, {
-					method: 'GET',
-					cache: 'no-store',
-				} );
-				const data = await response.json();
-				if (
-					! response?.ok ||
-					( data?.status && data.status !== 'success' )
-				) {
-					throw new Error( data?.message || 'Incorrect request' );
-				}
-				if ( ! data && ! data?.data?.content ) {
-					throw new Error( 'No data found' );
-				}
-				let dataArray = data?.data?.content || data;
+				const data = await request( url, mainObject.restNonce );
 				if ( isDetails ) {
-					dataArray = flattenJSON( dataArray );
 					setUsersDisplay( false );
-					setDetails( dataArray );
+					setDetails( flattenJSON( data.content ) );
 					setDetailsDisplay( true );
 					setLoadUsersButtonDisplay( true );
 				} else {
 					setLoadUsersButtonDisplay( false );
-					setUsers( dataArray );
+					setUsers(
+						Array.isArray( data.content ) ? data.content : []
+					);
 				}
 				if ( mainObject.isUserAdmin ) {
-					setExpiration( 'No cache' );
-					if ( data?.data?.expiration ) {
-						setExpiration( data?.data?.expiration );
-					}
+					setExpiration( data.expiration || 'No cache' );
 				}
-			} catch ( errorMessage ) {
-				setError( errorMessage.toString() );
+			} catch ( requestError ) {
+				setError( requestError.message );
 				if ( isDetails ) {
 					setLoadDetailsButtonDisplay( true );
 				} else {

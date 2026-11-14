@@ -9,8 +9,8 @@ describe( 'MainObject', () => {
 	it( 'reads settings from global_user_atlas', () => {
 		vi.stubGlobal( 'window', {
 			global_user_atlas: {
-				ajaxUrl: 'https://example.com/wp-admin/admin-ajax.php',
-				nonce: 'abc123',
+				restUrl: 'https://example.com/wp-json/user-atlas/v1/',
+				restNonce: 'abc123',
 				title: 'Team',
 				isUserAdmin: true,
 			},
@@ -18,10 +18,10 @@ describe( 'MainObject', () => {
 
 		const mainObject = new MainObject();
 
-		expect( mainObject.ajaxUrl ).toBe(
-			'https://example.com/wp-admin/admin-ajax.php'
+		expect( mainObject.restUrl ).toBe(
+			'https://example.com/wp-json/user-atlas/v1/'
 		);
-		expect( mainObject.nonce ).toBe( 'abc123' );
+		expect( mainObject.restNonce ).toBe( 'abc123' );
 		expect( mainObject.title ).toBe( 'Team' );
 		expect( mainObject.isUserAdmin ).toBe( true );
 	} );
@@ -31,35 +31,39 @@ describe( 'MainObject', () => {
 
 		const mainObject = new MainObject();
 
-		expect( mainObject.ajaxUrl ).toBe( '' );
-		expect( mainObject.nonce ).toBe( '' );
+		expect( mainObject.restUrl ).toBe( '' );
+		expect( mainObject.restNonce ).toBe( '' );
 		expect( mainObject.title ).toBe( 'User Atlas' );
 		expect( mainObject.isUserAdmin ).toBe( false );
 	} );
 
 	it( 'builds the users list URL', () => {
 		vi.stubGlobal( 'window', {
-			global_user_atlas: {
-				ajaxUrl: '/wp-admin/admin-ajax.php',
-				nonce: 'abc123',
-			},
+			global_user_atlas: { restUrl: '/wp-json/user-atlas/v1/' },
 		} );
 
 		expect( new MainObject().usersListUrl() ).toBe(
-			'/wp-admin/admin-ajax.php?action=user_atlas&nonce=abc123&cmd=users'
+			'/wp-json/user-atlas/v1/users'
+		);
+	} );
+
+	it( 'builds the users list URL when pretty permalinks are off', () => {
+		vi.stubGlobal( 'window', {
+			global_user_atlas: { restUrl: '/?rest_route=/user-atlas/v1/' },
+		} );
+
+		expect( new MainObject().usersListUrl() ).toBe(
+			'/?rest_route=/user-atlas/v1/users'
 		);
 	} );
 
 	it( 'builds the user details URL', () => {
 		vi.stubGlobal( 'window', {
-			global_user_atlas: {
-				ajaxUrl: '/wp-admin/admin-ajax.php',
-				nonce: 'abc123',
-			},
+			global_user_atlas: { restUrl: '/wp-json/user-atlas/v1/' },
 		} );
 
 		expect( new MainObject().userDetailsUrl( 5 ) ).toBe(
-			'/wp-admin/admin-ajax.php?action=user_atlas&nonce=abc123&cmd=user&id=5'
+			'/wp-json/user-atlas/v1/users/5'
 		);
 	} );
 

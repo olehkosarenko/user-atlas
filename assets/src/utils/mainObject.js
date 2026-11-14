@@ -1,7 +1,7 @@
 export default class MainObject {
 	constructor() {
-		this.ajaxUrl = this.getGlobalProperty( 'ajaxUrl', '' );
-		this.nonce = this.getGlobalProperty( 'nonce', '' );
+		this.restUrl = this.getGlobalProperty( 'restUrl', '' );
+		this.restNonce = this.getGlobalProperty( 'restNonce', '' );
 		this.title = this.getGlobalProperty( 'title', 'User Atlas' );
 		this.isUserAdmin = this.getGlobalProperty( 'isUserAdmin', false );
 	}
@@ -11,7 +11,7 @@ export default class MainObject {
 	}
 
 	usersListUrl() {
-		return `${ this.ajaxUrl }?action=user_atlas&nonce=${ this.nonce }&cmd=users`;
+		return `${ this.restUrl }users`;
 	}
 
 	userDetailsUrl( id ) {
@@ -19,6 +19,6 @@ export default class MainObject {
 			throw new Error( 'User ID is required' );
 		}
 
-		return `${ this.ajaxUrl }?action=user_atlas&nonce=${ this.nonce }&cmd=user&id=${ id }`;
+		return `${ this.restUrl }users/${ encodeURIComponent( id ) }`;
 	}
 }

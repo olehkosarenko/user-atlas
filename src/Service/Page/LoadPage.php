@@ -16,7 +16,7 @@ defined( 'ABSPATH' ) || die();
 /**
  * Class LoadPage
  *
- * @package WpApp\UserAtlas\View\Page
+ * @package WpApp\UserAtlas\Service\Page
  */
 class LoadPage {
 	/**
@@ -33,7 +33,7 @@ class LoadPage {
 	 *
 	 * @return void
 	 */
-	public function __construct( Option $option = null ) {
+	public function __construct( ?Option $option = null ) {
 		$this->option = $option ?? Option::instance();
 	}
 
@@ -57,16 +57,21 @@ class LoadPage {
 	}
 
 	/**
-	 * Add a title to the page
+	 * Set the document title of the page
 	 *
 	 * @param ?string $title Title.
 	 *
 	 * @return string
-	 *
-	 * phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter.Found
 	 */
 	public function changeTitle( ?string $title = '' ): string {
-		return $this->option->get( 'title', 'User Atlas' );
+		$title = $this->option->get( 'title', 'User Atlas' );
+
+		/**
+		 * Filters the page title.
+		 *
+		 * @param string $title Title from the plugin settings. Default 'User Atlas'.
+		 */
+		return (string) apply_filters( 'user_atlas__title', $title );
 	}
 
 	/**

@@ -2,7 +2,7 @@
 /**
  * SingletonTrait trait
  *
- * @package WP_Rocket
+ * @package WpApp\UserAtlas\Helper
  */
 
 namespace WpApp\UserAtlas\Helper;

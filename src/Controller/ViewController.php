@@ -51,7 +51,7 @@ class ViewController {
 	 *
 	 * @return void
 	 */
-	public function __construct( CheckPage $checkPage = null, LoadPage $loadPage = null, Asset $asset = null ) {
+	public function __construct( ?CheckPage $checkPage = null, ?LoadPage $loadPage = null, ?Asset $asset = null ) {
 		$this->checkPage = $checkPage ?? new CheckPage();
 		$this->loadPage  = $loadPage ?? new LoadPage();
 		$this->asset     = $asset ?? new Asset();

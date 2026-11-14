@@ -31,7 +31,7 @@ class AdminController {
 	 *
 	 * @param AdminSetting|null $setting Settings instance.
 	 */
-	public function __construct( AdminSetting $setting = null ) {
+	public function __construct( ?AdminSetting $setting = null ) {
 		$this->setting = $setting ?? new AdminSetting();
 	}
 

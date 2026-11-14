@@ -10,6 +10,7 @@ declare( strict_types=1 );
 namespace WpApp\UserAtlas\Service\Asset;
 
 use WpApp\UserAtlas\Service\Option\Option;
+use WpApp\UserAtlas\Service\Rest\UsersRoute;
 
 defined( 'ABSPATH' ) || die();
 
@@ -47,7 +48,7 @@ class Asset {
 	 *
 	 * @return void
 	 */
-	public function __construct( Option $option = null ) {
+	public function __construct( ?Option $option = null ) {
 		$this->option = $option ?? Option::instance();
 	}
 
@@ -60,11 +61,16 @@ class Asset {
 		$title      = $this->option->get( 'title', 'User Atlas' );
 		$title      = apply_filters( 'user_atlas__title', $title );
 		$globalArgs = [
-			'ajaxUrl'     => admin_url( 'admin-ajax.php' ),
-			'nonce'       => wp_create_nonce( 'user_atlas-nonce' ),
 			'title'       => $title,
 			'isUserAdmin' => current_user_can( 'manage_options' ),
+			'restUrl'     => esc_url_raw( rest_url( UsersRoute::REST_NAMESPACE . '/' ) ),
 		];
+
+		// Logged-in users need the REST nonce to be recognized; anonymous requests work without it,
+		// so a cached page never depends on a nonce that can expire.
+		if ( is_user_logged_in() ) {
+			$globalArgs['restNonce'] = wp_create_nonce( 'wp_rest' );
+		}
 
 		return apply_filters( 'user_atlas__global_args', $globalArgs );
 	}

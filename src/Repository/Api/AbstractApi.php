@@ -2,13 +2,14 @@
 /**
  * Abstract Api class
  *
- * @package WpApp\UserAtlas\Api
+ * @package WpApp\UserAtlas\Repository\Api
  */
 
 declare( strict_types=1 );
 
 namespace WpApp\UserAtlas\Repository\Api;
 
+use WP_Error;
 use WpApp\UserAtlas\Service\Cache\ApiCache;
 
 defined( 'ABSPATH' ) || die();
@@ -26,11 +27,6 @@ abstract class AbstractApi {
 	 * Default request timeout in seconds
 	 */
 	protected const REQUEST_TIMEOUT = 3;
-
-	/**
-	 * Exception code for failures that mean the API itself is unavailable.
-	 */
-	protected const API_UNAVAILABLE = 1;
 
 	/**
 	 * API cache instance.
@@ -96,12 +92,13 @@ abstract class AbstractApi {
 	/**
 	 * Send request to API
 	 *
+	 * Visitors only get generic messages; the technical reason of a failure is kept with the pause.
+	 *
 	 * @param string $url URL.
 	 *
-	 * @return array
-	 * @throws \Exception Invalid API response.
+	 * @return array|WP_Error Decoded response, or an error with the HTTP status to answer with.
 	 */
-	public function send( string $url ): array {
+	public function send( string $url ) {
 		$this->expiration = 0;
 
 		$cached = $this->cache->get( $url );
@@ -112,53 +109,58 @@ abstract class AbstractApi {
 		}
 
 		if ( $this->cache->isPaused() ) {
-			return [
-				'status'  => 'error',
-				'message' => __( 'API is temporarily unavailable, please try again later', 'user-atlas' ),
-			];
+			return new WP_Error(
+				'user_atlas_api_unavailable',
+				__( 'The users service is temporarily unavailable. Please try again later.', 'user-atlas' ),
+				[ 'status' => 503 ]
+			);
 		}
 
-		$content = [];
-		$error   = [];
-		try {
-			$response = wp_remote_get( self::API_URL . $url, [ 'timeout' => $this->timeout() ] );
-			if ( is_wp_error( $response ) ) {
-				throw new \Exception( $response->get_error_message(), self::API_UNAVAILABLE );
-			}
-
-			$response_code = wp_remote_retrieve_response_code( $response );
-			if ( 200 !== $response_code ) {
-				throw new \Exception(
-					'Invalid response code: ' . $response_code,
-					$this->isServerFailure( (int) $response_code ) ? self::API_UNAVAILABLE : 0
-				);
-			}
-
-			$body = wp_remote_retrieve_body( $response );
-			if ( empty( $body ) ) {
-				throw new \Exception( 'Empty response body', self::API_UNAVAILABLE );
-			}
-
-			$content = json_decode( $body, true );
-			if ( ! is_array( $content ) ) {
-				throw new \Exception( 'Invalid JSON', self::API_UNAVAILABLE );
-			}
-		} catch ( \Exception $err ) {
-			$error = [
-				'status'  => 'error',
-				'message' => $err->getMessage(),
-			];
-			if ( self::API_UNAVAILABLE === $err->getCode() ) {
-				$this->cache->pause( $err->getMessage() );
-			}
+		$response = wp_remote_get( self::API_URL . $url, [ 'timeout' => $this->timeout() ] );
+		if ( is_wp_error( $response ) ) {
+			return $this->fail( $response->get_error_message() );
 		}
 
-		if ( ! empty( $error ) ) {
-			return $error;
+		$code = (int) wp_remote_retrieve_response_code( $response );
+		if ( 404 === $code ) {
+			return new WP_Error(
+				'user_atlas_not_found',
+				__( 'The requested data was not found.', 'user-atlas' ),
+				[ 'status' => 404 ]
+			);
+		}
+
+		if ( 200 !== $code ) {
+			return $this->fail( 'Invalid response code: ' . $code, $this->isServerFailure( $code ) );
+		}
+
+		$content = json_decode( wp_remote_retrieve_body( $response ), true );
+		if ( ! is_array( $content ) ) {
+			return $this->fail( 'Invalid response body' );
 		}
 
 		$this->expiration = $this->cache->set( $url, $content );
 
 		return $content;
+	}
+
+	/**
+	 * Build the error for a failed request
+	 *
+	 * @param string $reason Technical reason, never shown to visitors.
+	 * @param bool   $pause  Whether the failure means the API itself is unavailable.
+	 *
+	 * @return WP_Error
+	 */
+	private function fail( string $reason, bool $pause = true ): WP_Error {
+		if ( $pause ) {
+			$this->cache->pause( $reason );
+		}
+
+		return new WP_Error(
+			'user_atlas_api_error',
+			__( 'Could not load the data. Please try again later.', 'user-atlas' ),
+			[ 'status' => 502 ]
+		);
 	}
 }

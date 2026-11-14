@@ -49,10 +49,9 @@ class CheckPage {
 	public function __construct( Option $option = null ) {
 		$this->option = $option ?? Option::instance();
 		$this->setSlug( $this->option->get( 'endpoint', 'user-atlas' ) );
-		// phpcs:disable WordPress.Security.ValidatedSanitizedInput.MissingUnslash
-		// phpcs:disable WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-		$this->request = ! empty( $_SERVER['REQUEST_URI'] ) ?
-			$this->changeRequest( $_SERVER['REQUEST_URI'] ) : '';
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Only compared with the page slug, never stored or output.
+		$requestUri = isset( $_SERVER['REQUEST_URI'] ) ? wp_unslash( $_SERVER['REQUEST_URI'] ) : '';
+		$this->changeRequest( (string) $requestUri );
 	}
 
 	/**
@@ -70,18 +69,34 @@ class CheckPage {
 	}
 
 	/**
-	 * Add request
+	 * Set the request path to compare with the page slug
 	 *
-	 * @param string $request Request.
+	 * Keeps the path relative to the site home, so the page also works when
+	 * WordPress is installed in a subdirectory.
 	 *
-	 * @return string
+	 * @param string $request Request URI.
+	 *
+	 * @return string Path without leading and trailing slashes, empty if it is not inside the site.
 	 */
 	public function changeRequest( string $request ): string {
-		$request       = explode( '?', $request )[0];
-		$parsedUrl     = wp_parse_url( $request );
-		$this->request = sanitize_key(
-			wp_unslash( $parsedUrl['path'] )
-		);
+		$this->request = '';
+
+		$path = wp_parse_url( $request, PHP_URL_PATH );
+		if ( ! is_string( $path ) ) {
+			return $this->request;
+		}
+
+		$path = trim( $path, '/' );
+		$home = trim( (string) wp_parse_url( home_url(), PHP_URL_PATH ), '/' );
+		if ( '' !== $home ) {
+			if ( 0 !== strpos( $path . '/', $home . '/' ) ) {
+				return $this->request;
+			}
+
+			$path = trim( substr( $path, strlen( $home ) ), '/' );
+		}
+
+		$this->request = $path;
 
 		return $this->request;
 	}
@@ -92,14 +107,6 @@ class CheckPage {
 	 * @return bool
 	 */
 	public function isPage(): bool {
-		if ( empty( $this->request ) ) {
-			return false;
-		}
-
-		if ( $this->request === $this->slug ) {
-			return true;
-		}
-
-		return false;
+		return '' !== $this->request && $this->request === $this->slug;
 	}
 }

@@ -48,7 +48,7 @@ class Asset {
 	 *
 	 * @return void
 	 */
-	public function __construct( Option $option = null ) {
+	public function __construct( ?Option $option = null ) {
 		$this->option = $option ?? Option::instance();
 	}
 

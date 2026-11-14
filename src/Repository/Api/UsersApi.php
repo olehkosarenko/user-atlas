@@ -2,7 +2,7 @@
 /**
  * Users Api
  *
- * @package WpApp\UserAtlas\Api
+ * @package WpApp\UserAtlas\Repository\Api
  */
 
 declare( strict_types=1 );

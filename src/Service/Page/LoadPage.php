@@ -16,7 +16,7 @@ defined( 'ABSPATH' ) || die();
 /**
  * Class LoadPage
  *
- * @package WpApp\UserAtlas\View\Page
+ * @package WpApp\UserAtlas\Service\Page
  */
 class LoadPage {
 	/**
@@ -33,7 +33,7 @@ class LoadPage {
 	 *
 	 * @return void
 	 */
-	public function __construct( Option $option = null ) {
+	public function __construct( ?Option $option = null ) {
 		$this->option = $option ?? Option::instance();
 	}
 
@@ -62,10 +62,8 @@ class LoadPage {
 	 * @param ?string $title Title.
 	 *
 	 * @return string
-	 *
-	 * phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter.Found
 	 */
-	public function changeTitle( ?string $title = '' ): string {
+	public function changeTitle( ?string $title = '' ): string { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.Found -- The filter passes the current title, which is replaced.
 		return $this->option->get( 'title', 'User Atlas' );
 	}
 

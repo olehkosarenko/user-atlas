@@ -17,7 +17,7 @@ use WpApp\UserAtlas\Controller\ViewController;
 /**
  * Class UserAtlas
  *
- * @package Plugin\UserAtlas
+ * @package WpApp\UserAtlas
  */
 final class UserAtlas {
 	use SingletonTrait;

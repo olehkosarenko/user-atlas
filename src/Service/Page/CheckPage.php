@@ -46,7 +46,7 @@ class CheckPage {
 	 *
 	 * @return void
 	 */
-	public function __construct( Option $option = null ) {
+	public function __construct( ?Option $option = null ) {
 		$this->option = $option ?? Option::instance();
 		$this->setSlug( $this->option->get( 'endpoint', 'user-atlas' ) );
 		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Only compared with the page slug, never stored or output.

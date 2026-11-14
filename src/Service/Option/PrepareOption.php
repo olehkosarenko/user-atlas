@@ -18,18 +18,32 @@ class PrepareOption {
 	/**
 	 * Prepare options before save
 	 *
-	 * @param array $options Options to sanitize.
+	 * Keeps only the known keys, so a crafted form cannot store extra data.
+	 * WordPress unslashes the submitted value before it gets here.
+	 *
+	 * @param mixed $options Submitted options, not always an array.
+	 *
+	 * @return array
 	 */
-	public function sanitize( array $options ): array {
-		foreach ( $options as $key => & $value ) {
-			if ( 'endpoint' === $key ) {
-				$value = sanitize_title( wp_unslash( $value ) );
-				continue;
-			}
+	public function sanitize( $options ): array {
+		$options = is_array( $options ) ? $options : [];
 
-			$value = sanitize_text_field( wp_unslash( $value ) );
-		}
+		return [
+			'endpoint'    => sanitize_title( $this->value( $options, 'endpoint' ) ),
+			'title'       => sanitize_text_field( $this->value( $options, 'title' ) ),
+			'last_update' => (string) absint( $this->value( $options, 'last_update' ) ),
+		];
+	}
 
-		return $options;
+	/**
+	 * Get a submitted value as a string
+	 *
+	 * @param array  $options Submitted options.
+	 * @param string $key     Option key.
+	 *
+	 * @return string Empty if the value is missing or not a scalar.
+	 */
+	private function value( array $options, string $key ): string {
+		return isset( $options[ $key ] ) && is_scalar( $options[ $key ] ) ? (string) $options[ $key ] : '';
 	}
 }

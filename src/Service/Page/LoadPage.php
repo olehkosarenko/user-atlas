@@ -57,14 +57,21 @@ class LoadPage {
 	}
 
 	/**
-	 * Add a title to the page
+	 * Set the document title of the page
 	 *
 	 * @param ?string $title Title.
 	 *
 	 * @return string
 	 */
 	public function changeTitle( ?string $title = '' ): string { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.Found -- The filter passes the current title, which is replaced.
-		return $this->option->get( 'title', 'User Atlas' );
+		$title = $this->option->get( 'title', 'User Atlas' );
+
+		/**
+		 * Filters the page title.
+		 *
+		 * @param string $title Title from the plugin settings. Default 'User Atlas'.
+		 */
+		return (string) apply_filters( 'user_atlas__title', $title );
 	}
 
 	/**

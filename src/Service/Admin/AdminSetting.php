@@ -67,7 +67,7 @@ class AdminSetting {
 	 *
 	 * @return void
 	 */
-	public function __construct( Plugin $plugin = null, Option $option = null, PrepareOption $prepareOption = null, ?ApiCache $cache = null ) {
+	public function __construct( ?Plugin $plugin = null, ?Option $option = null, ?PrepareOption $prepareOption = null, ?ApiCache $cache = null ) {
 		$this->plugin        = $plugin ?? new Plugin();
 		$this->option        = $option ?? Option::instance();
 		$this->prepareOption = $prepareOption ?? new PrepareOption();
@@ -243,7 +243,7 @@ class AdminSetting {
 	public function fieldLabelLastUpdate(): void {
 		$value = $this->option->get( 'last_update' );
 		if ( ! empty( $value ) && $value > 0 ) {
-			echo esc_html( gmdate( 'Y-m-d H:i:s', intval( $value ) ) );
+			echo esc_html( wp_date( 'Y-m-d H:i:s', intval( $value ) ) );
 		}
 		?>
 		<input type="hidden" name="user_atlas__options[last_update]" value="<?php echo esc_attr( time() ); ?>"/>

@@ -8,12 +8,25 @@
 
 - WordPress 6.6 or later
 - PHP 7.4 or later
+
+To install from source you also need:
+
 - [Composer](https://getcomposer.org/)
 - Node.js 26 LTS (see `assets/.nvmrc`) and npm, to build the frontend
 
 ## Installation
 
-The `vendor/` and `assets/build/` directories are not committed, so install the Composer dependencies and build the frontend after cloning. Without them the plugin does not load.
+### From a release
+
+1. Download `user-atlas.zip` from the [Releases](https://github.com/olehkosarenko/user-atlas/releases) page.
+2. In WordPress, go to **Plugins > Add New > Upload Plugin**, choose the zip and install it.
+3. Activate **User Atlas** in **Plugins**.
+
+The zip already contains the Composer dependencies and the built frontend.
+
+### From source
+
+The `vendor/` and `assets/build/` directories are not committed, so install the Composer dependencies and build the frontend after cloning. Without `vendor/` the plugin does not load, and without `assets/build/` the page stays empty; in both cases administrators see a notice with the command to run.
 
 ```sh
 cd wp-content/plugins
@@ -28,6 +41,8 @@ npm run build
 Use `composer install` without `--no-dev` if you also want the development tools (PHPCS).
 
 Then activate **User Atlas** in **Plugins**.
+
+The changes in each version are listed in [CHANGELOG.md](CHANGELOG.md).
 
 ## Usage
 
@@ -49,7 +64,7 @@ The routes need no nonce, so the page keeps working when its HTML is served from
 
 ### Caching
 
-Successful API responses are cached in transients for one hour, so repeated requests do not call the API. When the site has a persistent object cache, the transients are stored there. Errors are never cached. A single user is requested from the API only when its ID is in the cached list, so unknown IDs answer `404` without an API call or a new cache entry.
+Successful API responses are cached in transients for one hour, so repeated requests do not call the API. When the site has a persistent object cache, the transients are stored there. Errors are never cached. A single user is requested from the API only when its ID is in the list of users, so unknown IDs answer `404` without requesting that user or adding a cache entry.
 
 Administrators see when the cached data expires below the table. To load fresh data right away, use **Clear cache** in **Settings > User Atlas**.
 

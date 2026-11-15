@@ -1,0 +1,77 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Build and publish
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check that the tag matches the plugin version
+        run: |
+          tag_version="${GITHUB_REF_NAME#v}"
+          plugin_version="$(sed -n 's/^ \* Version: *//p' user-atlas.php)"
+          stable_tag="$(sed -n 's/^Stable tag: *//p' readme.txt)"
+          if [ "$tag_version" != "$plugin_version" ]; then
+            echo "Tag $GITHUB_REF_NAME does not match Version $plugin_version in user-atlas.php."
+            exit 1
+          fi
+          if [ "$tag_version" != "$stable_tag" ]; then
+            echo "Tag $GITHUB_REF_NAME does not match Stable tag $stable_tag in readme.txt."
+            exit 1
+          fi
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          tools: composer:v2
+          coverage: none
+
+      - name: Install Composer dependencies
+        run: composer install --no-dev --optimize-autoloader --no-interaction --no-progress --prefer-dist
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: assets/.nvmrc
+          cache: npm
+          cache-dependency-path: assets/package-lock.json
+
+      - name: Build the frontend
+        working-directory: assets
+        run: |
+          npm ci
+          npm run build
+
+      - name: Package the plugin
+        run: |
+          mkdir -p dist/user-atlas/assets
+          cp -R user-atlas.php uninstall.php src vendor LICENSE readme.txt dist/user-atlas/
+          cp -R assets/build dist/user-atlas/assets/
+          cd dist
+          zip -rq user-atlas.zip user-atlas
+
+      - name: Extract the release notes from the changelog
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          awk -v heading="## [$version]" '
+            index($0, heading) == 1 { found = 1; next }
+            found && /^## \[/ { exit }
+            found { print }
+          ' CHANGELOG.md > release-notes.md
+          if [ ! -s release-notes.md ]; then
+            echo "CHANGELOG.md has no section for $version."
+            exit 1
+          fi
+
+      - name: Create the GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "$GITHUB_REF_NAME" dist/user-atlas.zip --title "User Atlas ${GITHUB_REF_NAME#v}" --notes-file release-notes.md --verify-tag

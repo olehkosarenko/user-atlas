@@ -26,6 +26,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - A saved settings option or value of an unexpected type caused a fatal error on every request; such values now fall back to the defaults.
 - The last update time in the settings was taken from a hidden form field, so it showed when the settings page was opened, not when it was saved. It is now set on the server when the settings are saved.
 
+### Security
+
+- The page settings printed into the inline script now have `<`, `>` and `&` escaped, so a value from the `user_atlas__title` or `user_atlas__global_args` filter cannot change how the browser parses the script.
+
 ## [2.0.0] - 2026-11-15
 
 ### Breaking changes

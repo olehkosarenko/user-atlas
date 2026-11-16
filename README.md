@@ -132,6 +132,12 @@ npm run format     # format the code with the WordPress Prettier config
 
 GitHub Actions runs the linters, the unit tests and the build on every pull request and on pushes to `main`.
 
+### Releases
+
+Every pull request also builds the plugin zip; it is attached to the workflow run as the `user-atlas-zip` artifact.
+
+To publish a release, set the new version in `user-atlas.php` (`Version`) and `readme.txt` (`Stable tag`), add its section to `CHANGELOG.md`, merge to `main` and push a tag such as `v2.1.0` that points to a commit on `main`. The Release workflow then checks the tag, runs all the checks, builds the zip and publishes it on the Releases page. It stops before publishing if the tagged commit is not on `main`, the versions do not match the tag or the changelog has no section for the version.
+
 ## License
 
 [GPL-2.0-or-later](LICENSE)

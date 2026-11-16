@@ -46,7 +46,9 @@ The changes in each version are listed in [CHANGELOG.md](CHANGELOG.md).
 
 ## Usage
 
-Open `/user-atlas/` on your site, for example `https://example.com/user-atlas/`.
+Open `/user-atlas/` on your site, for example `https://example.com/user-atlas/`. With plain permalinks the page is at `/?user_atlas_page=1`. The link in **Settings > User Atlas** always points to the current address.
+
+The page is a normal WordPress page with its own template: it runs `wp_head()` and `wp_footer()`, so theme styles, the admin bar and other plugins work on it. To change the markup, copy `templates/page.php` to `user-atlas/page.php` in your theme; the React app mounts on the element with the ID `user-atlas-root`.
 
 Settings live in **Settings > User Atlas**:
 
@@ -72,7 +74,7 @@ Requests time out after 3 seconds. If the API fails (timeout, connection error, 
 
 ### Filters
 
-- `user_atlas__endpoint` - change the page slug
+- `user_atlas__endpoint` - change the page slug, also from a theme
 - `user_atlas__title` - change the page title
 - `user_atlas__global_args` - change the data passed to the frontend (`window.global_user_atlas`)
 - `user_atlas__cache_ttl` - how long API responses are cached, in seconds (default `3600`)

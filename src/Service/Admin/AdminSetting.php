@@ -13,6 +13,7 @@ use WpApp\UserAtlas\Service\Cache\ApiCache;
 use WpApp\UserAtlas\Service\Core\Plugin;
 use WpApp\UserAtlas\Service\Option\Option;
 use WpApp\UserAtlas\Service\Option\PrepareOption;
+use WpApp\UserAtlas\Service\Page\CheckPage;
 
 defined( 'ABSPATH' ) || die();
 
@@ -58,20 +59,29 @@ class AdminSetting {
 	private string $pageHook = '';
 
 	/**
+	 * CheckPage instance, gives the page URL.
+	 *
+	 * @var CheckPage
+	 */
+	private CheckPage $checkPage;
+
+	/**
 	 * Settings constructor.
 	 *
 	 * @param Plugin|null        $plugin Plugin instance.
 	 * @param Option|null        $option Option instance.
 	 * @param PrepareOption|null $prepareOption PrepareOption instance.
 	 * @param ApiCache|null      $cache ApiCache instance.
+	 * @param CheckPage|null     $checkPage CheckPage instance.
 	 *
 	 * @return void
 	 */
-	public function __construct( ?Plugin $plugin = null, ?Option $option = null, ?PrepareOption $prepareOption = null, ?ApiCache $cache = null ) {
+	public function __construct( ?Plugin $plugin = null, ?Option $option = null, ?PrepareOption $prepareOption = null, ?ApiCache $cache = null, ?CheckPage $checkPage = null ) {
 		$this->plugin        = $plugin ?? new Plugin();
 		$this->option        = $option ?? Option::instance();
 		$this->prepareOption = $prepareOption ?? new PrepareOption();
 		$this->cache         = $cache ?? new ApiCache();
+		$this->checkPage     = $checkPage ?? new CheckPage( $this->option );
 	}
 
 	/**
@@ -179,14 +189,12 @@ class AdminSetting {
 		$this->plugin->init();
 		register_setting( 'user_atlas__group', 'user_atlas__options', [ $this->prepareOption, 'sanitize' ] );
 		add_settings_section( 'user_atlas__section_main', esc_html__( 'Options', 'user-atlas' ), '', $this->plugin->getSlug() );
-		$endpoint = $this->option->get( 'endpoint', 'user-atlas' );
-		$endpoint = apply_filters( 'user_atlas__endpoint', $endpoint );
 
 		add_settings_field(
 			'endpoint',
 			sprintf(
 				'<a href="%1$s">%2$s</a>',
-				esc_url( home_url( $endpoint ) . '/' ),
+				esc_url( $this->checkPage->getUrl() ),
 				esc_html__( 'Endpoint', 'user-atlas' )
 			),
 			[ $this, 'fieldInputEndpoint' ],

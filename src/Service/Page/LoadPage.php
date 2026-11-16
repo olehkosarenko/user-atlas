@@ -9,6 +9,7 @@ declare( strict_types=1 );
 
 namespace WpApp\UserAtlas\Service\Page;
 
+use WP_Query;
 use WpApp\UserAtlas\Service\Option\Option;
 
 defined( 'ABSPATH' ) || die();
@@ -38,22 +39,70 @@ class LoadPage {
 	}
 
 	/**
-	 * Change the wp_query
+	 * Check if a query is the main query of the plugin page
 	 *
-	 * @return void
+	 * @param WP_Query $query Query.
+	 *
+	 * @return bool
 	 */
-	public function changeWpQuery(): void {
-		global $wp_query;
-		$wp_query->is_404 = false;
+	private function isPageQuery( WP_Query $query ): bool {
+		return $query->is_main_query() && '' !== (string) $query->get( CheckPage::QUERY_VAR );
 	}
 
 	/**
-	 * Change the header
+	 * Mark the main query of the page as a page that is neither the home page nor a 404
+	 *
+	 * @param WP_Query $query Query.
 	 *
 	 * @return void
 	 */
-	public function changeHeader(): void {
-		status_header( 200 );
+	public function changeWpQuery( WP_Query $query ): void {
+		if ( ! $this->isPageQuery( $query ) ) {
+			return;
+		}
+
+		$query->is_home     = false;
+		$query->is_404      = false;
+		$query->is_singular = false;
+	}
+
+	/**
+	 * Skip the posts query of the page, it shows no posts
+	 *
+	 * @param array|null $posts Posts returned instead of the database query, null to run it.
+	 * @param WP_Query   $query Query.
+	 *
+	 * @return array|null
+	 */
+	public function skipPostsQuery( ?array $posts, WP_Query $query ): ?array {
+		return $this->isPageQuery( $query ) ? [] : $posts;
+	}
+
+	/**
+	 * Keep WordPress from turning the page into a 404
+	 *
+	 * Without posts WordPress would send a 404 status with no-cache headers.
+	 *
+	 * @param bool     $preempt Whether to skip the default 404 handling.
+	 * @param WP_Query $query   Main query.
+	 *
+	 * @return bool
+	 */
+	public function skip404( bool $preempt, WP_Query $query ): bool {
+		return $this->isPageQuery( $query ) ? true : $preempt;
+	}
+
+	/**
+	 * Keep WordPress from redirecting the page address to the home page
+	 *
+	 * @param string|false $redirectUrl URL WordPress would redirect to.
+	 *
+	 * @return string|false
+	 */
+	public function skipCanonicalRedirect( $redirectUrl ) {
+		global $wp_query;
+
+		return $wp_query instanceof WP_Query && $this->isPageQuery( $wp_query ) ? false : $redirectUrl;
 	}
 
 	/**
@@ -75,27 +124,23 @@ class LoadPage {
 	}
 
 	/**
-	 * Load the template
+	 * Use the template of the page
 	 *
-	 * @return void
+	 * A theme can replace the template with its own user-atlas/page.php.
+	 *
+	 * @param string $template Template WordPress would load.
+	 *
+	 * @return string
 	 */
-	public function loadTemplate(): void {
-		get_header( 'embed' );
-		echo '<div id="user-atlas-root"></div>';
-		get_footer( 'embed' );
-		$this->exit();
-	}
+	public function changeTemplate( string $template ): string {
+		global $wp_query;
 
-	/**
-	 * Exit method for phpunit test
-	 *
-	 * @codeCoverageIgnore
-	 *
-	 * @return void
-	 */
-	public function exit(): void {
-		// @codeCoverageIgnoreStart
-		exit;
-		// @codeCoverageIgnoreEnd
+		if ( ! $wp_query instanceof WP_Query || ! $this->isPageQuery( $wp_query ) ) {
+			return $template;
+		}
+
+		$themeTemplate = locate_template( 'user-atlas/page.php' );
+
+		return '' !== $themeTemplate ? $themeTemplate : dirname( WP_APP_USER_ATLAS_FILE ) . '/templates/page.php';
 	}
 }

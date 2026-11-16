@@ -53,7 +53,7 @@ jobs:
       - name: Package the plugin
         run: |
           mkdir -p dist/user-atlas/assets
-          cp -R user-atlas.php uninstall.php src vendor LICENSE readme.txt dist/user-atlas/
+          cp -R user-atlas.php uninstall.php src templates vendor LICENSE readme.txt dist/user-atlas/
           cp -R assets/build dist/user-atlas/assets/
           cd dist
           zip -rq user-atlas.zip user-atlas

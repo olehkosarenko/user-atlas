@@ -4,6 +4,19 @@ All notable changes to this project are documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- The page template `templates/page.php`, which a theme can replace with `user-atlas/page.php`.
+- With plain permalinks the page is available at `/?user_atlas_page=1`.
+
+### Fixed
+
+- The `user_atlas__endpoint` filter had no effect when it was added from a theme, and the link in the settings then led to a 404 page.
+- The page was sent with the no-cache headers of a 404 page.
+- The page used the embed template: it had no viewport meta tag, sent an `X-WP-embed` header, contained a hidden sharing dialog and did not run `wp_head()` and `wp_footer()`.
+
 ## [2.0.0] - 2026-11-15
 
 ### Breaking changes

@@ -4,7 +4,7 @@ All notable changes to this project are documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [2.1.0] - 2026-11-17
 
 ### Added
 
@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - The page template `templates/page.php`, which a theme can replace with `user-atlas/page.php`.
 - With plain permalinks the page is available at `/?user_atlas_page=1`.
 - When API requests are paused after a failure, the settings page shows it next to **Clear cache**, with the technical reason of the failed request.
+- Every pull request builds the plugin zip in GitHub Actions, and a release is published only for a version tag on `main` after all checks pass.
 
 ### Changed
 
@@ -86,4 +87,5 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 - Initial release.
 
+[2.1.0]: https://github.com/olehkosarenko/user-atlas/releases/tag/v2.1.0
 [2.0.0]: https://github.com/olehkosarenko/user-atlas/releases/tag/v2.0.0

@@ -23,6 +23,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - The page used the embed template: it had no viewport meta tag, sent an `X-WP-embed` header, contained a hidden sharing dialog and did not run `wp_head()` and `wp_footer()`.
 - A 400, 401 or 403 response from the API did not pause the API, so every visit requested it again. Now every failed request pauses the API; only a 404 for a single user still answers `404` without a pause.
 - A 404 for the user list answered `404` and did not pause the API; it now counts as an API failure.
+- A saved settings option or value of an unexpected type caused a fatal error on every request; such values now fall back to the defaults.
 
 ## [2.0.0] - 2026-11-15
 

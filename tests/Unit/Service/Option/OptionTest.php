@@ -35,4 +35,31 @@ final class OptionTest extends TestCase {
 
 		$this->assertSame( [], $option->all() );
 	}
+	public function test_a_saved_option_that_is_not_an_array_gives_the_defaults(): void {
+		$this->options[ Option::OPTION_NAME ] = 'broken';
+		$option                               = new Option();
+		$option->init();
+
+		$this->assertSame( 'user-atlas', $option->get( 'endpoint', 'user-atlas' ) );
+	}
+
+	public function test_scalar_values_are_returned_as_strings(): void {
+		$this->options[ Option::OPTION_NAME ] = [ 'last_update' => 1700000000 ];
+		$option                               = new Option();
+		$option->init();
+
+		$this->assertSame( '1700000000', $option->get( 'last_update' ) );
+	}
+
+	public function test_values_that_are_not_scalar_give_the_default(): void {
+		$this->options[ Option::OPTION_NAME ] = [ 'title' => [ 'Team' ] ];
+		$option                               = new Option();
+		$option->init();
+
+		$this->assertSame( 'User Atlas', $option->get( 'title', 'User Atlas' ) );
+	}
+
+	public function test_options_that_were_never_loaded_give_the_default(): void {
+		$this->assertSame( 'user-atlas', ( new Option() )->get( 'endpoint', 'user-atlas' ) );
+	}
 }

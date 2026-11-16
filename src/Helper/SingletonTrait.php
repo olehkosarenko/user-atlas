@@ -5,6 +5,8 @@
  * @package WpApp\UserAtlas\Helper
  */
 
+declare( strict_types=1 );
+
 namespace WpApp\UserAtlas\Helper;
 
 defined( 'ABSPATH' ) || die();

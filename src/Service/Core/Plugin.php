@@ -5,6 +5,8 @@
  * @package WpApp\UserAtlas\Service\Core
  */
 
+declare( strict_types=1 );
+
 namespace WpApp\UserAtlas\Service\Core;
 
 defined( 'ABSPATH' ) || die();

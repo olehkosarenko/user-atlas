@@ -21,22 +21,35 @@
             "WpApp\\UserAtlas\\": "src/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "WpApp\\UserAtlas\\Tests\\": "tests/"
+        }
+    },
     "config": {
         "allow-plugins": {
             "dealerdirect/phpcodesniffer-composer-installer": true
+        },
+        "platform": {
+            "php": "7.4.33"
         }
     },
     "require-dev": {
         "wp-coding-standards/wpcs": "^3.1",
         "phpcompatibility/phpcompatibility-wp": "^2.1",
-        "automattic/vipwpcs": "^3.1"
+        "automattic/vipwpcs": "^3.1",
+        "brain/monkey": "^2.6",
+        "phpunit/phpunit": "^9.6",
+        "yoast/phpunit-polyfills": "^2.0"
     },
     "scripts": {
         "lint": "phpcs",
-        "lint:fix": "phpcbf"
+        "lint:fix": "phpcbf",
+        "test": "phpunit"
     },
     "scripts-descriptions": {
         "lint": "Check PHP code against the coding standards.",
-        "lint:fix": "Fix coding standard violations automatically."
+        "lint:fix": "Fix coding standard violations automatically.",
+        "test": "Run the PHP unit tests."
     }
 }

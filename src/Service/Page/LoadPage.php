@@ -124,27 +124,23 @@ class LoadPage {
 	}
 
 	/**
-	 * Load the template
+	 * Use the template of the page
 	 *
-	 * @return void
+	 * A theme can replace the template with its own user-atlas/page.php.
+	 *
+	 * @param string $template Template WordPress would load.
+	 *
+	 * @return string
 	 */
-	public function loadTemplate(): void {
-		get_header( 'embed' );
-		echo '<div id="user-atlas-root"></div>';
-		get_footer( 'embed' );
-		$this->exit();
-	}
+	public function changeTemplate( string $template ): string {
+		global $wp_query;
 
-	/**
-	 * Exit method for phpunit test
-	 *
-	 * @codeCoverageIgnore
-	 *
-	 * @return void
-	 */
-	public function exit(): void {
-		// @codeCoverageIgnoreStart
-		exit;
-		// @codeCoverageIgnoreEnd
+		if ( ! $wp_query instanceof WP_Query || ! $this->isPageQuery( $wp_query ) ) {
+			return $template;
+		}
+
+		$themeTemplate = locate_template( 'user-atlas/page.php' );
+
+		return '' !== $themeTemplate ? $themeTemplate : dirname( WP_APP_USER_ATLAS_FILE ) . '/templates/page.php';
 	}
 }

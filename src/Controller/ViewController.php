@@ -69,7 +69,8 @@ class ViewController {
 		add_filter( 'posts_pre_query', [ $this->loadPage, 'skipPostsQuery' ], 10, 2 );
 		add_filter( 'pre_handle_404', [ $this->loadPage, 'skip404' ], 10, 2 );
 		add_filter( 'redirect_canonical', [ $this->loadPage, 'skipCanonicalRedirect' ] );
-		add_action( 'template_redirect', [ $this, 'setupPage' ], 0 );
+		add_filter( 'template_include', [ $this->loadPage, 'changeTemplate' ] );
+		add_action( 'template_redirect', [ $this, 'setupPage' ] );
 	}
 
 	/**
@@ -81,8 +82,7 @@ class ViewController {
 		if ( ! $this->checkPage->isPage() ) {
 			return;
 		}
-		add_action( 'enqueue_embed_scripts', [ $this->asset, 'enqueueScripts' ] );
+		add_action( 'wp_enqueue_scripts', [ $this->asset, 'enqueueScripts' ] );
 		add_filter( 'pre_get_document_title', [ $this->loadPage, 'changeTitle' ] );
-		$this->loadPage->loadTemplate();
 	}
 }

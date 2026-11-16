@@ -2,3 +2,6 @@
 /assets/node_modules/
 /.phpcs.cache
 /assets/build/
+
+# PHPUnit cache
+/.phpunit.result.cache

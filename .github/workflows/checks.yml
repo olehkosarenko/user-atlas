@@ -20,6 +20,9 @@ jobs:
           tools: composer:v2
           coverage: none
 
+      - name: Validate composer.json
+        run: composer validate --strict
+
       - name: Install Composer dependencies
         run: composer install --no-interaction --no-progress --prefer-dist
 

@@ -211,7 +211,15 @@ class AdminSetting {
 	 */
 	public function fields(): void {
 		$this->plugin->init();
-		register_setting( 'user_atlas__group', Option::OPTION_NAME, [ $this->prepareOption, 'sanitize' ] );
+		register_setting(
+			'user_atlas__group',
+			Option::OPTION_NAME,
+			[
+				'type'              => 'array',
+				'sanitize_callback' => [ $this->prepareOption, 'sanitize' ],
+				'default'           => [],
+			]
+		);
 		add_settings_section( 'user_atlas__section_main', esc_html__( 'Options', 'user-atlas' ), '', $this->plugin->getSlug() );
 
 		add_settings_field(

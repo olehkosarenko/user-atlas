@@ -162,4 +162,30 @@ final class AdminSettingTest extends TestCase {
 
 		$this->assertSame( '', (string) ob_get_clean() );
 	}
+
+	public function test_the_option_is_registered_with_its_type_sanitizer_and_default(): void {
+		$registered = [];
+		Functions\when( 'register_setting' )->alias(
+			static function ( string $group, string $name, array $args ) use ( &$registered ): void {
+				$registered = [ $group, $name, $args ];
+			}
+		);
+		Functions\when( 'add_settings_section' )->justReturn( null );
+		Functions\when( 'add_settings_field' )->justReturn( null );
+		Functions\when( 'esc_html__' )->returnArg();
+		$prepareOption = new PrepareOption();
+
+		( new AdminSetting( $this->plugin(), Mockery::mock( Option::class ), $prepareOption, new ApiCache(), Mockery::mock( CheckPage::class ) ) )->fields();
+
+		$this->assertSame( 'user_atlas__group', $registered[0] );
+		$this->assertSame( Option::OPTION_NAME, $registered[1] );
+		$this->assertSame(
+			[
+				'type'              => 'array',
+				'sanitize_callback' => [ $prepareOption, 'sanitize' ],
+				'default'           => [],
+			],
+			$registered[2]
+		);
+	}
 }

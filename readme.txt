@@ -36,7 +36,11 @@ To install from source, clone the repository into `wp-content/plugins`, then run
 
 = Where is the page? =
 
-At `/user-atlas/` on your site. Change the address (Endpoint) and the page title in **Settings > User Atlas**.
+At `/user-atlas/` on your site, or at `/?user_atlas_page=1` with plain permalinks. Change the address (Endpoint) and the page title in **Settings > User Atlas**.
+
+= Can a theme change the page? =
+
+Yes. Copy `templates/page.php` from the plugin to `user-atlas/page.php` in your theme and change the markup; keep the element with the ID `user-atlas-root`. The `user_atlas__endpoint` filter can also be used from a theme.
 
 = Does the plugin call an external service? =
 

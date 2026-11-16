@@ -37,11 +37,17 @@ class Plugin {
 	private string $slug = '';
 
 	/**
-	 * Initialize the plugin
+	 * Read the plugin data
+	 *
+	 * The settings page calls this from several hooks, so the plugin header is read only once.
 	 *
 	 * @return void
 	 */
 	public function init(): void {
+		if ( '' !== $this->basename ) {
+			return;
+		}
+
 		$this->basename = basename( WP_APP_USER_ATLAS_FILE );
 		$plugin         = get_plugin_data( WP_APP_USER_ATLAS_FILE );
 		$this->name     = $plugin['Name'];

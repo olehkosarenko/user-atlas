@@ -136,6 +136,13 @@ final class ApiRepositoryTest extends TestCase {
 		$this->assertFalse( ( new ApiCache() )->isPaused() );
 	}
 
+	public function test_a_404_for_the_user_list_answers_502_and_pauses_the_api(): void {
+		$this->respondWith( $this->response( 404 ) );
+
+		$this->assertError( ( new ApiRepository() )->users(), 'user_atlas_api_error', 502 );
+		$this->assertTrue( ( new ApiCache() )->isPaused() );
+	}
+
 	/**
 	 * @dataProvider provide_server_failures
 	 *

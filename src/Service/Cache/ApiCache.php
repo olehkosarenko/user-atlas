@@ -108,6 +108,17 @@ class ApiCache {
 	}
 
 	/**
+	 * Get why API requests are paused
+	 *
+	 * @return string|null Technical reason of the failed request, or null if requests are not paused.
+	 */
+	public function pauseReason(): ?string {
+		$reason = get_transient( self::PAUSE_KEY );
+
+		return is_string( $reason ) ? $reason : null;
+	}
+
+	/**
 	 * Pause API requests after a failure
 	 *
 	 * @param string $message Error message of the failed request.

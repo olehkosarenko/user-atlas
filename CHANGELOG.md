@@ -11,11 +11,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - PHP unit tests with PHPUnit and Brain Monkey (`composer test`), run on PHP 7.4 and 8.5 in GitHub Actions.
 - The page template `templates/page.php`, which a theme can replace with `user-atlas/page.php`.
 - With plain permalinks the page is available at `/?user_atlas_page=1`.
+- When API requests are paused after a failure, the settings page shows it next to **Clear cache**, with the technical reason of the failed request.
 
 ### Changed
 
 - The plugin header has an `Update URI`, so WordPress no longer looks for updates of this plugin on WordPress.org, where a plugin with the same slug could offer an unrelated update.
 - API requests no longer follow redirects. The API address is fixed, so a redirect now counts as an API failure instead of loading data from another address.
+- The settings fields have labels tied to their inputs, and the page link moved from the **Endpoint** label to a description under the field.
 
 ### Fixed
 

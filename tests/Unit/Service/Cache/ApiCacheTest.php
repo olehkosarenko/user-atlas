@@ -74,6 +74,17 @@ final class ApiCacheTest extends TestCase {
 		$this->assertSame( MINUTE_IN_SECONDS, $this->transients[ ApiCache::PAUSE_KEY ]['expiration'] );
 	}
 
+	public function test_the_pause_reason_is_kept_while_the_api_is_paused(): void {
+		$cache = new ApiCache();
+		$this->assertNull( $cache->pauseReason() );
+
+		$cache->pause( 'Invalid response code: 403' );
+		$this->assertSame( 'Invalid response code: 403', $cache->pauseReason() );
+
+		$cache->clear();
+		$this->assertNull( $cache->pauseReason() );
+	}
+
 	public function test_pause_duration_can_be_filtered(): void {
 		Filters\expectApplied( 'user_atlas__failure_pause' )->once()->andReturn( 300 );
 

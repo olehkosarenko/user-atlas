@@ -120,6 +120,7 @@ class AdminSetting {
 
 			<h2><?php esc_html_e( 'API cache', 'user-atlas' ); ?></h2>
 			<p><?php esc_html_e( 'API responses are cached. Clear the cache to load fresh data on the next request.', 'user-atlas' ); ?></p>
+			<?php $this->pauseNotice(); ?>
 			<form action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" method="post">
 				<input type="hidden" name="action" value="user_atlas_clear_cache"/>
 				<?php
@@ -127,6 +128,29 @@ class AdminSetting {
 				submit_button( __( 'Clear cache', 'user-atlas' ), 'secondary', 'submit', false );
 				?>
 			</form>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Show that API requests are paused, with the reason of the failed request
+	 *
+	 * Visitors only get a generic error message, so this is where administrators see what failed.
+	 *
+	 * @return void
+	 */
+	public function pauseNotice(): void {
+		$reason = $this->cache->pauseReason();
+		if ( null === $reason ) {
+			return;
+		}
+		?>
+		<div class="notice notice-warning inline">
+			<p>
+				<?php esc_html_e( 'API requests are paused after a failed request:', 'user-atlas' ); ?>
+				<code><?php echo esc_html( $reason ); ?></code>
+			</p>
+			<p><?php esc_html_e( 'They resume on their own after the pause. Clear the cache to try again right away.', 'user-atlas' ); ?></p>
 		</div>
 		<?php
 	}
@@ -187,19 +211,24 @@ class AdminSetting {
 	 */
 	public function fields(): void {
 		$this->plugin->init();
-		register_setting( 'user_atlas__group', Option::OPTION_NAME, [ $this->prepareOption, 'sanitize' ] );
+		register_setting(
+			'user_atlas__group',
+			Option::OPTION_NAME,
+			[
+				'type'              => 'array',
+				'sanitize_callback' => [ $this->prepareOption, 'sanitize' ],
+				'default'           => [],
+			]
+		);
 		add_settings_section( 'user_atlas__section_main', esc_html__( 'Options', 'user-atlas' ), '', $this->plugin->getSlug() );
 
 		add_settings_field(
 			'endpoint',
-			sprintf(
-				'<a href="%1$s">%2$s</a>',
-				esc_url( $this->checkPage->getUrl() ),
-				esc_html__( 'Endpoint', 'user-atlas' )
-			),
+			esc_html__( 'Endpoint', 'user-atlas' ),
 			[ $this, 'fieldInputEndpoint' ],
 			$this->plugin->getSlug(),
-			'user_atlas__section_main'
+			'user_atlas__section_main',
+			[ 'label_for' => 'user_atlas_endpoint' ]
 		);
 
 		add_settings_field(
@@ -207,7 +236,8 @@ class AdminSetting {
 			esc_html__( 'Title', 'user-atlas' ),
 			[ $this, 'fieldInputTitle' ],
 			$this->plugin->getSlug(),
-			'user_atlas__section_main'
+			'user_atlas__section_main',
+			[ 'label_for' => 'user_atlas_title' ]
 		);
 
 		add_settings_field(
@@ -220,14 +250,19 @@ class AdminSetting {
 	}
 
 	/**
-	 * Show input field for endpoint
+	 * Show input field for endpoint, with a link to the page below it
 	 *
 	 * @return void
 	 */
 	public function fieldInputEndpoint(): void {
 		$value = $this->option->get( 'endpoint' );
+		$url   = $this->checkPage->getUrl();
 		?>
-		<input type="text" name="<?php echo esc_attr( Option::OPTION_NAME ); ?>[endpoint]" value="<?php echo esc_attr( $value ); ?>"/>
+		<input type="text" id="user_atlas_endpoint" class="regular-text" name="<?php echo esc_attr( Option::OPTION_NAME ); ?>[endpoint]" value="<?php echo esc_attr( $value ); ?>" aria-describedby="user_atlas_endpoint_description"/>
+		<p class="description" id="user_atlas_endpoint_description">
+			<?php esc_html_e( 'The page is available at:', 'user-atlas' ); ?>
+			<a href="<?php echo esc_url( $url ); ?>"><?php echo esc_html( $url ); ?></a>
+		</p>
 		<?php
 	}
 
@@ -239,7 +274,7 @@ class AdminSetting {
 	public function fieldInputTitle(): void {
 		$value = $this->option->get( 'title' );
 		?>
-		<input type="text" name="<?php echo esc_attr( Option::OPTION_NAME ); ?>[title]" value="<?php echo esc_attr( $value ); ?>"/>
+		<input type="text" id="user_atlas_title" class="regular-text" name="<?php echo esc_attr( Option::OPTION_NAME ); ?>[title]" value="<?php echo esc_attr( $value ); ?>"/>
 		<?php
 	}
 

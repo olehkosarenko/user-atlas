@@ -35,31 +35,30 @@ final class PrepareOptionTest extends TestCase {
 				return trim( strip_tags( $text ) ); // phpcs:ignore WordPress.WP.AlternativeFunctions.strip_tags_strip_tags
 			}
 		);
-		Functions\when( 'absint' )->alias(
-			static function ( $value ): int {
-				return abs( (int) $value );
-			}
-		);
 	}
 
 	public function test_only_known_keys_are_kept_and_sanitized(): void {
 		$result = ( new PrepareOption() )->sanitize(
 			[
-				'endpoint'    => 'Team Atlas!',
-				'title'       => ' <b>Our team</b> ',
-				'last_update' => '-1700000000',
-				'injected'    => 'value',
+				'endpoint' => 'Team Atlas!',
+				'title'    => ' <b>Our team</b> ',
+				'injected' => 'value',
 			]
 		);
 
-		$this->assertSame(
-			[
-				'endpoint'    => 'team-atlas',
-				'title'       => 'Our team',
-				'last_update' => '1700000000',
-			],
-			$result
-		);
+		$this->assertSame( [ 'endpoint', 'title', 'last_update' ], array_keys( $result ) );
+		$this->assertSame( 'team-atlas', $result['endpoint'] );
+		$this->assertSame( 'Our team', $result['title'] );
+	}
+
+	public function test_the_last_update_is_the_time_of_saving_not_a_submitted_value(): void {
+		$before = time();
+		$result = ( new PrepareOption() )->sanitize( [ 'last_update' => '1700000000' ] );
+		$after  = time();
+
+		$this->assertMatchesRegularExpression( '/^\d+$/', $result['last_update'] );
+		$this->assertGreaterThanOrEqual( $before, (int) $result['last_update'] );
+		$this->assertLessThanOrEqual( $after, (int) $result['last_update'] );
 	}
 
 	/**
@@ -68,14 +67,10 @@ final class PrepareOptionTest extends TestCase {
 	 * @param mixed $input Submitted value.
 	 */
 	public function test_invalid_input_gives_empty_values( $input ): void {
-		$this->assertSame(
-			[
-				'endpoint'    => '',
-				'title'       => '',
-				'last_update' => '0',
-			],
-			( new PrepareOption() )->sanitize( $input )
-		);
+		$result = ( new PrepareOption() )->sanitize( $input );
+
+		$this->assertSame( '', $result['endpoint'] );
+		$this->assertSame( '', $result['title'] );
 	}
 
 	/**

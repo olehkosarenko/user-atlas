@@ -24,6 +24,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - A 400, 401 or 403 response from the API did not pause the API, so every visit requested it again. Now every failed request pauses the API; only a 404 for a single user still answers `404` without a pause.
 - A 404 for the user list answered `404` and did not pause the API; it now counts as an API failure.
 - A saved settings option or value of an unexpected type caused a fatal error on every request; such values now fall back to the defaults.
+- The last update time in the settings was taken from a hidden form field, so it showed when the settings page was opened, not when it was saved. It is now set on the server when the settings are saved.
 
 ## [2.0.0] - 2026-11-15
 

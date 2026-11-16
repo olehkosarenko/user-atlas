@@ -244,17 +244,14 @@ class AdminSetting {
 	}
 
 	/**
-	 * Show input field for title
+	 * Show when the settings were last saved
 	 *
 	 * @return void
 	 */
 	public function fieldLabelLastUpdate(): void {
-		$value = $this->option->get( 'last_update' );
-		if ( ! empty( $value ) && $value > 0 ) {
-			echo esc_html( wp_date( 'Y-m-d H:i:s', intval( $value ) ) );
+		$value = (int) $this->option->get( 'last_update' );
+		if ( $value > 0 ) {
+			echo esc_html( (string) wp_date( 'Y-m-d H:i:s', $value ) );
 		}
-		?>
-		<input type="hidden" name="user_atlas__options[last_update]" value="<?php echo esc_attr( time() ); ?>"/>
-		<?php
 	}
 }

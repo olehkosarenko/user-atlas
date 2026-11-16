@@ -113,7 +113,22 @@ final class ApiRepositoryTest extends TestCase {
 
 		( new ApiRepository() )->users();
 
-		$this->assertSame( [ 'timeout' => 1 ], $this->lastArgs );
+		$this->assertSame( 1, $this->lastArgs['timeout'] );
+	}
+
+	public function test_redirects_are_not_followed(): void {
+		$this->respondWith( $this->response( 200, '[]' ) );
+
+		( new ApiRepository() )->users();
+
+		$this->assertSame( 0, $this->lastArgs['redirection'] );
+	}
+
+	public function test_a_redirect_answers_502_and_pauses_the_api(): void {
+		$this->respondWith( $this->response( 301 ) );
+
+		$this->assertError( ( new ApiRepository() )->users(), 'user_atlas_api_error', 502 );
+		$this->assertSame( 'Invalid response code: 301', $this->transients[ ApiCache::PAUSE_KEY ]['value'] );
 	}
 
 	public function test_an_empty_list_is_a_valid_response(): void {

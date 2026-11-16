@@ -105,7 +105,14 @@ abstract class AbstractApi {
 			);
 		}
 
-		$response = wp_remote_get( self::API_URL . $url, [ 'timeout' => $this->timeout() ] );
+		// The API URL is fixed, so a redirect is unexpected: it fails like any other response than 200.
+		$response = wp_remote_get(
+			self::API_URL . $url,
+			[
+				'timeout'     => $this->timeout(),
+				'redirection' => 0,
+			]
+		);
 		if ( is_wp_error( $response ) ) {
 			return $this->fail( $response->get_error_message() );
 		}

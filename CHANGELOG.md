@@ -12,6 +12,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - The page template `templates/page.php`, which a theme can replace with `user-atlas/page.php`.
 - With plain permalinks the page is available at `/?user_atlas_page=1`.
 
+### Changed
+
+- API requests no longer follow redirects. The API address is fixed, so a redirect now counts as an API failure instead of loading data from another address.
+
 ### Fixed
 
 - The `user_atlas__endpoint` filter had no effect when it was added from a theme, and the link in the settings then led to a 404 page.

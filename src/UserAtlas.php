@@ -25,13 +25,11 @@ final class UserAtlas {
 	/**
 	 * Init the plugin
 	 *
+	 * SingletonTrait::instance() calls this only when WordPress is not installing.
+	 *
 	 * @return void
 	 */
 	public function init(): void {
-		if ( wp_installing() ) {
-			return;
-		}
-
 		add_action( 'init', [ new RestController(), 'init' ] );
 		add_action( 'init', [ new AdminController(), 'init' ] );
 		add_action( 'init', [ new ViewController(), 'init' ] );

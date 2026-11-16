@@ -109,4 +109,32 @@ final class AdminSettingTest extends TestCase {
 		$this->assertStringContainsString( 'name="user_atlas__options[endpoint]" value="team"', $output );
 		$this->assertStringContainsString( 'name="user_atlas__options[title]" value="Our team"', $output );
 	}
+
+	public function test_a_pause_is_shown_with_its_escaped_reason(): void {
+		Functions\when( 'esc_html' )->alias(
+			static function ( string $text ): string {
+				return htmlspecialchars( $text, ENT_QUOTES );
+			}
+		);
+		Functions\when( 'esc_html_e' )->echoArg();
+		$cache = new ApiCache();
+		$cache->pause( 'Invalid response code: 403 <b>' );
+		$setting = new AdminSetting( $this->plugin(), Mockery::mock( Option::class ), new PrepareOption(), $cache, Mockery::mock( CheckPage::class ) );
+
+		ob_start();
+		$setting->pauseNotice();
+		$output = (string) ob_get_clean();
+
+		$this->assertStringContainsString( 'notice-warning', $output );
+		$this->assertStringContainsString( '<code>Invalid response code: 403 &lt;b&gt;</code>', $output );
+	}
+
+	public function test_no_pause_notice_is_shown_when_the_api_works(): void {
+		$setting = new AdminSetting( $this->plugin(), Mockery::mock( Option::class ), new PrepareOption(), new ApiCache(), Mockery::mock( CheckPage::class ) );
+
+		ob_start();
+		$setting->pauseNotice();
+
+		$this->assertSame( '', (string) ob_get_clean() );
+	}
 }

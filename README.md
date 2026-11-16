@@ -70,7 +70,7 @@ Successful API responses are cached in transients for one hour, so repeated requ
 
 Administrators see when the cached data expires below the table. To load fresh data right away, use **Clear cache** in **Settings > User Atlas**.
 
-Requests time out after 3 seconds. If the API fails (timeout, connection error, invalid body or any response other than `200`), the plugin stops calling it for one minute and answers `503`; cached data is still served. A 404 for a single user only means that the user does not exist: it answers `404` and does not pause the API. Visitors only see a generic error message, never the technical reason.
+Requests time out after 3 seconds. If the API fails (timeout, connection error, invalid body or any response other than `200`), the plugin stops calling it for one minute and answers `503`; cached data is still served. A 404 for a single user only means that the user does not exist: it answers `404` and does not pause the API. Visitors only see a generic error message, never the technical reason. While requests are paused, **Settings > User Atlas** shows the reason to administrators.
 
 ### Filters
 

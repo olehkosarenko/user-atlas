@@ -120,6 +120,7 @@ class AdminSetting {
 
 			<h2><?php esc_html_e( 'API cache', 'user-atlas' ); ?></h2>
 			<p><?php esc_html_e( 'API responses are cached. Clear the cache to load fresh data on the next request.', 'user-atlas' ); ?></p>
+			<?php $this->pauseNotice(); ?>
 			<form action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" method="post">
 				<input type="hidden" name="action" value="user_atlas_clear_cache"/>
 				<?php
@@ -127,6 +128,29 @@ class AdminSetting {
 				submit_button( __( 'Clear cache', 'user-atlas' ), 'secondary', 'submit', false );
 				?>
 			</form>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Show that API requests are paused, with the reason of the failed request
+	 *
+	 * Visitors only get a generic error message, so this is where administrators see what failed.
+	 *
+	 * @return void
+	 */
+	public function pauseNotice(): void {
+		$reason = $this->cache->pauseReason();
+		if ( null === $reason ) {
+			return;
+		}
+		?>
+		<div class="notice notice-warning inline">
+			<p>
+				<?php esc_html_e( 'API requests are paused after a failed request:', 'user-atlas' ); ?>
+				<code><?php echo esc_html( $reason ); ?></code>
+			</p>
+			<p><?php esc_html_e( 'They resume on their own after the pause. Clear the cache to try again right away.', 'user-atlas' ); ?></p>
 		</div>
 		<?php
 	}

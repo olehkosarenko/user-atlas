@@ -101,6 +101,17 @@ The code is also checked against the WordPress VIP coding standards (WordPress-V
 
 The same check runs in GitHub Actions on every pull request and on pushes to `main`.
 
+### PHP unit tests
+
+The PHP code is covered by unit tests in `tests/`, written with [PHPUnit](https://phpunit.de/) and [Brain Monkey](https://giuseppe-mazzapica.gitbook.io/brain-monkey/). They run without WordPress or a database: Brain Monkey replaces the WordPress functions and `tests/Stubs` has small versions of the WordPress classes the plugin uses.
+
+```sh
+composer install
+composer test       # run the PHP unit tests
+```
+
+GitHub Actions runs the tests on PHP 7.4 and 8.5 on every pull request and on pushes to `main`.
+
 ### Frontend
 
 The frontend is a React app built with [`@wordpress/scripts`](https://developer.wordpress.org/block-editor/reference-guides/packages/packages-scripts/). The source is in `assets/src`, the build goes to `assets/build`. React comes from WordPress (`wp-element`), it is not bundled.

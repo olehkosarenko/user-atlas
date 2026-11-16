@@ -17,6 +17,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - The `user_atlas__endpoint` filter had no effect when it was added from a theme, and the link in the settings then led to a 404 page.
 - The page was sent with the no-cache headers of a 404 page.
 - The page used the embed template: it had no viewport meta tag, sent an `X-WP-embed` header, contained a hidden sharing dialog and did not run `wp_head()` and `wp_footer()`.
+- A 400, 401 or 403 response from the API did not pause the API, so every visit requested it again. Now every failed request pauses the API; only a 404 for a single user still answers `404` without a pause.
+- A 404 for the user list answered `404` and did not pause the API; it now counts as an API failure.
 
 ## [2.0.0] - 2026-11-15
 

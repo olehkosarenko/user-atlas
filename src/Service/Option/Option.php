@@ -39,15 +39,6 @@ class Option {
 	}
 
 	/**
-	 * Get all options
-	 *
-	 * @return array
-	 */
-	public function all(): array {
-		return $this->options;
-	}
-
-	/**
 	 * Get a single option
 	 *
 	 * @param string $key          Option key.

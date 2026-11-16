@@ -29,11 +29,11 @@ final class OptionTest extends TestCase {
 		$this->assertSame( '', $option->get( 'missing' ) );
 	}
 
-	public function test_no_saved_options_give_an_empty_list(): void {
+	public function test_no_saved_options_give_the_defaults(): void {
 		$option = new Option();
 		$option->init();
 
-		$this->assertSame( [], $option->all() );
+		$this->assertSame( 'user-atlas', $option->get( 'endpoint', 'user-atlas' ) );
 	}
 	public function test_a_saved_option_that_is_not_an_array_gives_the_defaults(): void {
 		$this->options[ Option::OPTION_NAME ] = 'broken';

@@ -38,24 +38,43 @@ final class AdminSettingTest extends TestCase {
 		return $plugin;
 	}
 
-	public function test_the_endpoint_label_links_to_the_page_url(): void {
+	public function test_the_fields_are_labelled_for_their_inputs(): void {
 		$fields = [];
 		Functions\when( 'register_setting' )->justReturn( true );
 		Functions\when( 'add_settings_section' )->justReturn( null );
 		Functions\when( 'add_settings_field' )->alias(
-			static function ( string $id, string $title ) use ( &$fields ): void {
-				$fields[ $id ] = $title;
+			static function ( string $id, string $title, $callback, string $page, string $section, array $args = [] ) use ( &$fields ): void {
+				$fields[ $id ] = [ $title, $args ];
 			}
 		);
 		Functions\when( 'esc_html__' )->returnArg();
-		Functions\when( 'esc_url' )->returnArg();
-		$checkPage = Mockery::mock( CheckPage::class );
-		$checkPage->shouldReceive( 'getUrl' )->once()->andReturn( 'https://example.com/?user_atlas_page=1' );
 
-		( new AdminSetting( $this->plugin(), Mockery::mock( Option::class ), new PrepareOption(), new ApiCache(), $checkPage ) )->fields();
+		( new AdminSetting( $this->plugin(), Mockery::mock( Option::class ), new PrepareOption(), new ApiCache(), Mockery::mock( CheckPage::class ) ) )->fields();
 
-		$this->assertSame( '<a href="https://example.com/?user_atlas_page=1">Endpoint</a>', $fields['endpoint'] );
 		$this->assertSame( [ 'endpoint', 'title', 'last_update' ], array_keys( $fields ) );
+		$this->assertSame( [ 'Endpoint', [ 'label_for' => 'user_atlas_endpoint' ] ], $fields['endpoint'] );
+		$this->assertSame( [ 'Title', [ 'label_for' => 'user_atlas_title' ] ], $fields['title'] );
+		$this->assertSame( [ 'Last Update', [] ], $fields['last_update'] );
+	}
+
+	public function test_the_endpoint_description_links_to_the_page_url(): void {
+		Functions\when( 'esc_attr' )->returnArg();
+		Functions\when( 'esc_url' )->returnArg();
+		Functions\when( 'esc_html' )->returnArg();
+		Functions\when( 'esc_html_e' )->echoArg();
+		$option = Mockery::mock( Option::class );
+		$option->shouldReceive( 'get' )->with( 'endpoint' )->andReturn( 'team' );
+		$checkPage = Mockery::mock( CheckPage::class );
+		$checkPage->shouldReceive( 'getUrl' )->once()->andReturn( 'https://example.com/team/' );
+
+		ob_start();
+		( new AdminSetting( $this->plugin(), $option, new PrepareOption(), new ApiCache(), $checkPage ) )->fieldInputEndpoint();
+		$output = (string) ob_get_clean();
+
+		$this->assertStringContainsString( 'id="user_atlas_endpoint"', $output );
+		$this->assertStringContainsString( 'aria-describedby="user_atlas_endpoint_description"', $output );
+		$this->assertStringContainsString( '<p class="description" id="user_atlas_endpoint_description">', $output );
+		$this->assertStringContainsString( '<a href="https://example.com/team/">https://example.com/team/</a>', $output );
 	}
 
 	public function test_clearing_the_cache_needs_the_manage_options_capability(): void {
@@ -99,7 +118,12 @@ final class AdminSettingTest extends TestCase {
 		$option = Mockery::mock( Option::class );
 		$option->shouldReceive( 'get' )->with( 'endpoint' )->andReturn( 'team' );
 		$option->shouldReceive( 'get' )->with( 'title' )->andReturn( 'Our team' );
-		$setting = new AdminSetting( $this->plugin(), $option, new PrepareOption(), new ApiCache(), Mockery::mock( CheckPage::class ) );
+		Functions\when( 'esc_url' )->returnArg();
+		Functions\when( 'esc_html' )->returnArg();
+		Functions\when( 'esc_html_e' )->echoArg();
+		$checkPage = Mockery::mock( CheckPage::class );
+		$checkPage->shouldReceive( 'getUrl' )->andReturn( 'https://example.com/team/' );
+		$setting = new AdminSetting( $this->plugin(), $option, new PrepareOption(), new ApiCache(), $checkPage );
 
 		ob_start();
 		$setting->fieldInputEndpoint();
@@ -108,6 +132,7 @@ final class AdminSettingTest extends TestCase {
 
 		$this->assertStringContainsString( 'name="user_atlas__options[endpoint]" value="team"', $output );
 		$this->assertStringContainsString( 'name="user_atlas__options[title]" value="Our team"', $output );
+		$this->assertStringContainsString( 'id="user_atlas_title"', $output );
 	}
 
 	public function test_a_pause_is_shown_with_its_escaped_reason(): void {

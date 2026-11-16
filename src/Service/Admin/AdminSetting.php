@@ -216,14 +216,11 @@ class AdminSetting {
 
 		add_settings_field(
 			'endpoint',
-			sprintf(
-				'<a href="%1$s">%2$s</a>',
-				esc_url( $this->checkPage->getUrl() ),
-				esc_html__( 'Endpoint', 'user-atlas' )
-			),
+			esc_html__( 'Endpoint', 'user-atlas' ),
 			[ $this, 'fieldInputEndpoint' ],
 			$this->plugin->getSlug(),
-			'user_atlas__section_main'
+			'user_atlas__section_main',
+			[ 'label_for' => 'user_atlas_endpoint' ]
 		);
 
 		add_settings_field(
@@ -231,7 +228,8 @@ class AdminSetting {
 			esc_html__( 'Title', 'user-atlas' ),
 			[ $this, 'fieldInputTitle' ],
 			$this->plugin->getSlug(),
-			'user_atlas__section_main'
+			'user_atlas__section_main',
+			[ 'label_for' => 'user_atlas_title' ]
 		);
 
 		add_settings_field(
@@ -244,14 +242,19 @@ class AdminSetting {
 	}
 
 	/**
-	 * Show input field for endpoint
+	 * Show input field for endpoint, with a link to the page below it
 	 *
 	 * @return void
 	 */
 	public function fieldInputEndpoint(): void {
 		$value = $this->option->get( 'endpoint' );
+		$url   = $this->checkPage->getUrl();
 		?>
-		<input type="text" name="<?php echo esc_attr( Option::OPTION_NAME ); ?>[endpoint]" value="<?php echo esc_attr( $value ); ?>"/>
+		<input type="text" id="user_atlas_endpoint" class="regular-text" name="<?php echo esc_attr( Option::OPTION_NAME ); ?>[endpoint]" value="<?php echo esc_attr( $value ); ?>" aria-describedby="user_atlas_endpoint_description"/>
+		<p class="description" id="user_atlas_endpoint_description">
+			<?php esc_html_e( 'The page is available at:', 'user-atlas' ); ?>
+			<a href="<?php echo esc_url( $url ); ?>"><?php echo esc_html( $url ); ?></a>
+		</p>
 		<?php
 	}
 
@@ -263,7 +266,7 @@ class AdminSetting {
 	public function fieldInputTitle(): void {
 		$value = $this->option->get( 'title' );
 		?>
-		<input type="text" name="<?php echo esc_attr( Option::OPTION_NAME ); ?>[title]" value="<?php echo esc_attr( $value ); ?>"/>
+		<input type="text" id="user_atlas_title" class="regular-text" name="<?php echo esc_attr( Option::OPTION_NAME ); ?>[title]" value="<?php echo esc_attr( $value ); ?>"/>
 		<?php
 	}
 

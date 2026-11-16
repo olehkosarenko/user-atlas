@@ -65,6 +65,10 @@ class ViewController {
 	public function init(): void {
 		add_filter( 'query_vars', [ $this->checkPage, 'addQueryVar' ] );
 		add_filter( 'request', [ $this->checkPage, 'matchRequest' ] );
+		add_action( 'parse_query', [ $this->loadPage, 'changeWpQuery' ] );
+		add_filter( 'posts_pre_query', [ $this->loadPage, 'skipPostsQuery' ], 10, 2 );
+		add_filter( 'pre_handle_404', [ $this->loadPage, 'skip404' ], 10, 2 );
+		add_filter( 'redirect_canonical', [ $this->loadPage, 'skipCanonicalRedirect' ] );
 		add_action( 'template_redirect', [ $this, 'setupPage' ], 0 );
 	}
 
@@ -79,8 +83,6 @@ class ViewController {
 		}
 		add_action( 'enqueue_embed_scripts', [ $this->asset, 'enqueueScripts' ] );
 		add_filter( 'pre_get_document_title', [ $this->loadPage, 'changeTitle' ] );
-		$this->loadPage->changeHeader();
-		$this->loadPage->changeWpQuery();
 		$this->loadPage->loadTemplate();
 	}
 }

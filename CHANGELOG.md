@@ -14,6 +14,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Changed
 
+- The plugin header has an `Update URI`, so WordPress no longer looks for updates of this plugin on WordPress.org, where a plugin with the same slug could offer an unrelated update.
 - API requests no longer follow redirects. The API address is fixed, so a redirect now counts as an API failure instead of loading data from another address.
 
 ### Fixed

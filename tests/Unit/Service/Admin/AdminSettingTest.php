@@ -76,4 +76,37 @@ final class AdminSettingTest extends TestCase {
 		$this->assertSame( 1, $cache->version() );
 		$this->assertTrue( $cache->isPaused() );
 	}
+
+	public function test_the_last_update_is_shown_without_a_form_field(): void {
+		Functions\when( 'wp_date' )->alias(
+			static function ( string $format, int $timestamp ): string {
+				return gmdate( $format, $timestamp );
+			}
+		);
+		Functions\when( 'esc_html' )->returnArg();
+		$option = Mockery::mock( Option::class );
+		$option->shouldReceive( 'get' )->with( 'last_update' )->andReturn( '1700000000' );
+
+		ob_start();
+		( new AdminSetting( $this->plugin(), $option, new PrepareOption(), new ApiCache(), Mockery::mock( CheckPage::class ) ) )->fieldLabelLastUpdate();
+		$output = (string) ob_get_clean();
+
+		$this->assertSame( '2023-11-14 22:13:20', trim( $output ) );
+	}
+
+	public function test_the_inputs_post_into_the_saved_option(): void {
+		Functions\when( 'esc_attr' )->returnArg();
+		$option = Mockery::mock( Option::class );
+		$option->shouldReceive( 'get' )->with( 'endpoint' )->andReturn( 'team' );
+		$option->shouldReceive( 'get' )->with( 'title' )->andReturn( 'Our team' );
+		$setting = new AdminSetting( $this->plugin(), $option, new PrepareOption(), new ApiCache(), Mockery::mock( CheckPage::class ) );
+
+		ob_start();
+		$setting->fieldInputEndpoint();
+		$setting->fieldInputTitle();
+		$output = (string) ob_get_clean();
+
+		$this->assertStringContainsString( 'name="user_atlas__options[endpoint]" value="team"', $output );
+		$this->assertStringContainsString( 'name="user_atlas__options[title]" value="Our team"', $output );
+	}
 }

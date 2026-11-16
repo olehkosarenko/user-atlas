@@ -14,7 +14,7 @@ use WpApp\UserAtlas\Helper\SingletonTrait;
 defined( 'ABSPATH' ) || die();
 
 /**
- * Class Options
+ * Class Option
  */
 class Option {
 	use SingletonTrait;
@@ -26,7 +26,7 @@ class Option {
 	 *
 	 * @var array
 	 */
-	private array $options;
+	private array $options = [];
 
 	/**
 	 * Init options
@@ -35,31 +35,23 @@ class Option {
 	 */
 	public function init(): void {
 		$options       = get_option( self::OPTION_NAME );
-		$this->options = ! empty( $options ) ? $options : [];
-	}
-
-	/**
-	 * Get all options
-	 *
-	 * @return array
-	 */
-	public function all(): array {
-		return $this->options;
+		$this->options = is_array( $options ) ? $options : [];
 	}
 
 	/**
 	 * Get a single option
 	 *
-	 * @param string  $key Option key.
-	 * @param ?string $defaultValue Default value.
+	 * @param string $key          Option key.
+	 * @param string $defaultValue Default value.
 	 *
-	 * @return string
+	 * @return string The saved value, or the default if it is empty or not a scalar.
 	 */
 	public function get( string $key, string $defaultValue = '' ): string {
-		if ( ! empty( $this->options[ $key ] ) ) {
-			return $this->options[ $key ];
+		$value = $this->options[ $key ] ?? null;
+		if ( is_scalar( $value ) && ! empty( $value ) ) {
+			return (string) $value;
 		}
 
-		return $defaultValue ?? '';
+		return $defaultValue;
 	}
 }

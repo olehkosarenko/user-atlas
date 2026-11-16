@@ -42,7 +42,7 @@ class Asset {
 	private Option $option;
 
 	/**
-	 * ScriptsManager constructor.
+	 * Asset constructor.
 	 *
 	 * @param Option|null $option Option instance.
 	 *
@@ -98,9 +98,11 @@ class Asset {
 			[ 'in_footer' => true ]
 		);
 
+		// The data passes public filters, so markup characters are escaped: a "<!--" or "</script>"
+		// in a value cannot change how the browser parses the inline script.
 		wp_add_inline_script(
 			self::HANDLE,
-			'var global_user_atlas = ' . wp_json_encode( $this->globalArgs() ) . ';',
+			'var global_user_atlas = ' . wp_json_encode( $this->globalArgs(), JSON_HEX_TAG | JSON_HEX_AMP | JSON_UNESCAPED_SLASHES ) . ';',
 			'before'
 		);
 

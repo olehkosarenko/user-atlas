@@ -5,6 +5,8 @@
  * @package WpApp\UserAtlas\Helper
  */
 
+declare( strict_types=1 );
+
 namespace WpApp\UserAtlas\Helper;
 
 defined( 'ABSPATH' ) || die();
@@ -14,7 +16,9 @@ defined( 'ABSPATH' ) || die();
  */
 trait SingletonTrait {
 	/**
-	 * Instance of the plugin
+	 * Get the single instance of the class, initialized on first use
+	 *
+	 * @return self
 	 */
 	public static function instance(): self {
 		static $instance;

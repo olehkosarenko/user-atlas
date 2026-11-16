@@ -26,9 +26,9 @@ class AdminSetting {
 	/**
 	 * Plugin
 	 *
-	 * @var object|Plugin $plugin Plugin instance.
+	 * @var Plugin
 	 */
-	private $plugin;
+	private Plugin $plugin;
 
 	/**
 	 * Option
@@ -187,7 +187,7 @@ class AdminSetting {
 	 */
 	public function fields(): void {
 		$this->plugin->init();
-		register_setting( 'user_atlas__group', 'user_atlas__options', [ $this->prepareOption, 'sanitize' ] );
+		register_setting( 'user_atlas__group', Option::OPTION_NAME, [ $this->prepareOption, 'sanitize' ] );
 		add_settings_section( 'user_atlas__section_main', esc_html__( 'Options', 'user-atlas' ), '', $this->plugin->getSlug() );
 
 		add_settings_field(
@@ -227,7 +227,7 @@ class AdminSetting {
 	public function fieldInputEndpoint(): void {
 		$value = $this->option->get( 'endpoint' );
 		?>
-		<input type="text" name="user_atlas__options[endpoint]" value="<?php echo esc_attr( $value ); ?>"/>
+		<input type="text" name="<?php echo esc_attr( Option::OPTION_NAME ); ?>[endpoint]" value="<?php echo esc_attr( $value ); ?>"/>
 		<?php
 	}
 
@@ -239,22 +239,19 @@ class AdminSetting {
 	public function fieldInputTitle(): void {
 		$value = $this->option->get( 'title' );
 		?>
-		<input type="text" name="user_atlas__options[title]" value="<?php echo esc_attr( $value ); ?>"/>
+		<input type="text" name="<?php echo esc_attr( Option::OPTION_NAME ); ?>[title]" value="<?php echo esc_attr( $value ); ?>"/>
 		<?php
 	}
 
 	/**
-	 * Show input field for title
+	 * Show when the settings were last saved
 	 *
 	 * @return void
 	 */
 	public function fieldLabelLastUpdate(): void {
-		$value = $this->option->get( 'last_update' );
-		if ( ! empty( $value ) && $value > 0 ) {
-			echo esc_html( wp_date( 'Y-m-d H:i:s', intval( $value ) ) );
+		$value = (int) $this->option->get( 'last_update' );
+		if ( $value > 0 ) {
+			echo esc_html( (string) wp_date( 'Y-m-d H:i:s', $value ) );
 		}
-		?>
-		<input type="hidden" name="user_atlas__options[last_update]" value="<?php echo esc_attr( time() ); ?>"/>
-		<?php
 	}
 }

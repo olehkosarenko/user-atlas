@@ -5,6 +5,8 @@
  * @package WpApp\UserAtlas\Service\Core
  */
 
+declare( strict_types=1 );
+
 namespace WpApp\UserAtlas\Service\Core;
 
 defined( 'ABSPATH' ) || die();
@@ -13,13 +15,6 @@ defined( 'ABSPATH' ) || die();
  * Plugin
  */
 class Plugin {
-	/**
-	 * The file of the plugin.
-	 *
-	 * @var string
-	 */
-	private string $file = '';
-
 	/**
 	 * The basename of the plugin.
 	 *
@@ -35,13 +30,6 @@ class Plugin {
 	private string $name = '';
 
 	/**
-	 * The version of the plugin.
-	 *
-	 * @var string
-	 */
-	private string $version = '';
-
-	/**
 	 * The slug of the plugin.
 	 *
 	 * @var string
@@ -49,46 +37,25 @@ class Plugin {
 	private string $slug = '';
 
 	/**
-	 * The url of the plugin.
+	 * Read the plugin data
 	 *
-	 * @var string
-	 */
-	private string $url = '';
-
-	/**
-	 * The path of the plugin.
-	 *
-	 * @var string
-	 */
-	private string $path = '';
-
-	/**
-	 * Initialize the plugin
+	 * The settings page calls this from several hooks, so the plugin header is read only once.
 	 *
 	 * @return void
 	 */
 	public function init(): void {
-		$this->file     = WP_APP_USER_ATLAS_FILE;
+		if ( '' !== $this->basename ) {
+			return;
+		}
+
 		$this->basename = basename( WP_APP_USER_ATLAS_FILE );
 		$plugin         = get_plugin_data( WP_APP_USER_ATLAS_FILE );
 		$this->name     = $plugin['Name'];
 		$this->slug     = $plugin['TextDomain'];
-		$this->version  = $plugin['Version'];
-		$this->url      = plugin_dir_url( $this->file );
-		$this->path     = plugin_dir_path( $this->file );
 	}
 
 	/**
-	 * Get the name of the plugin.
-	 *
-	 * @return string
-	 */
-	public function getFile(): string {
-		return $this->file;
-	}
-
-	/**
-	 * Get the name of the plugin.
+	 * Get the file name of the plugin, used as the settings page slug.
 	 *
 	 * @return string
 	 */
@@ -106,38 +73,11 @@ class Plugin {
 	}
 
 	/**
-	 * Get the version of the plugin.
-	 *
-	 * @return string
-	 */
-	public function getVersion(): string {
-		return $this->version;
-	}
-
-	/**
 	 * Get the slug of the plugin.
 	 *
 	 * @return string
 	 */
 	public function getSlug(): string {
 		return $this->slug;
-	}
-
-	/**
-	 * Get the url of the plugin.
-	 *
-	 * @return string
-	 */
-	public function getUrl(): string {
-		return $this->url;
-	}
-
-	/**
-	 * Get the path of the plugin.
-	 *
-	 * @return string
-	 */
-	public function getPath(): string {
-		return $this->path;
 	}
 }

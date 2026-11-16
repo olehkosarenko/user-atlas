@@ -19,6 +19,7 @@ class PrepareOption {
 	 * Prepare options before save
 	 *
 	 * Keeps only the known keys, so a crafted form cannot store extra data.
+	 * The last update time is set here, when the settings are saved, never taken from the form.
 	 * WordPress unslashes the submitted value before it gets here.
 	 *
 	 * @param mixed $options Submitted options, not always an array.
@@ -31,7 +32,7 @@ class PrepareOption {
 		return [
 			'endpoint'    => sanitize_title( $this->value( $options, 'endpoint' ) ),
 			'title'       => sanitize_text_field( $this->value( $options, 'title' ) ),
-			'last_update' => (string) absint( $this->value( $options, 'last_update' ) ),
+			'last_update' => (string) time(),
 		];
 	}
 

@@ -14,7 +14,7 @@ use WpApp\UserAtlas\Helper\SingletonTrait;
 defined( 'ABSPATH' ) || die();
 
 /**
- * Class Options
+ * Class Option
  */
 class Option {
 	use SingletonTrait;

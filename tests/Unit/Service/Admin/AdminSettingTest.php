@@ -93,4 +93,20 @@ final class AdminSettingTest extends TestCase {
 
 		$this->assertSame( '2023-11-14 22:13:20', trim( $output ) );
 	}
+
+	public function test_the_inputs_post_into_the_saved_option(): void {
+		Functions\when( 'esc_attr' )->returnArg();
+		$option = Mockery::mock( Option::class );
+		$option->shouldReceive( 'get' )->with( 'endpoint' )->andReturn( 'team' );
+		$option->shouldReceive( 'get' )->with( 'title' )->andReturn( 'Our team' );
+		$setting = new AdminSetting( $this->plugin(), $option, new PrepareOption(), new ApiCache(), Mockery::mock( CheckPage::class ) );
+
+		ob_start();
+		$setting->fieldInputEndpoint();
+		$setting->fieldInputTitle();
+		$output = (string) ob_get_clean();
+
+		$this->assertStringContainsString( 'name="user_atlas__options[endpoint]" value="team"', $output );
+		$this->assertStringContainsString( 'name="user_atlas__options[title]" value="Our team"', $output );
+	}
 }

@@ -42,7 +42,7 @@ class Asset {
 	private Option $option;
 
 	/**
-	 * ScriptsManager constructor.
+	 * Asset constructor.
 	 *
 	 * @param Option|null $option Option instance.
 	 *

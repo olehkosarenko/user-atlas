@@ -22,9 +22,9 @@ class AdminController {
 	/**
 	 * Settings instance.
 	 *
-	 * @var object AdminSettings
+	 * @var AdminSetting
 	 */
-	private object $setting;
+	private AdminSetting $setting;
 
 	/**
 	 * Controller constructor.

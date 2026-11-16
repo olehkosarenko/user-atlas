@@ -113,7 +113,22 @@ final class ApiRepositoryTest extends TestCase {
 
 		( new ApiRepository() )->users();
 
-		$this->assertSame( [ 'timeout' => 1 ], $this->lastArgs );
+		$this->assertSame( 1, $this->lastArgs['timeout'] );
+	}
+
+	public function test_redirects_are_not_followed(): void {
+		$this->respondWith( $this->response( 200, '[]' ) );
+
+		( new ApiRepository() )->users();
+
+		$this->assertSame( 0, $this->lastArgs['redirection'] );
+	}
+
+	public function test_a_redirect_answers_502_and_pauses_the_api(): void {
+		$this->respondWith( $this->response( 301 ) );
+
+		$this->assertError( ( new ApiRepository() )->users(), 'user_atlas_api_error', 502 );
+		$this->assertSame( 'Invalid response code: 301', $this->transients[ ApiCache::PAUSE_KEY ]['value'] );
 	}
 
 	public function test_an_empty_list_is_a_valid_response(): void {
@@ -134,6 +149,13 @@ final class ApiRepositoryTest extends TestCase {
 
 		$this->assertError( ( new ApiRepository() )->user( 99 ), 'user_atlas_not_found', 404 );
 		$this->assertFalse( ( new ApiCache() )->isPaused() );
+	}
+
+	public function test_a_404_for_the_user_list_answers_502_and_pauses_the_api(): void {
+		$this->respondWith( $this->response( 404 ) );
+
+		$this->assertError( ( new ApiRepository() )->users(), 'user_atlas_api_error', 502 );
+		$this->assertTrue( ( new ApiCache() )->isPaused() );
 	}
 
 	/**
@@ -162,30 +184,39 @@ final class ApiRepositoryTest extends TestCase {
 	}
 
 	/**
-	 * Documents the current behaviour: client errors other than 404 and 429
-	 * answer 502 without pausing the API.
-	 *
-	 * @dataProvider provide_other_client_errors
+	 * @dataProvider provide_client_errors
 	 *
 	 * @param int $code HTTP status code.
 	 */
-	public function test_other_client_errors_answer_502_without_pausing_the_api( int $code ): void {
+	public function test_client_errors_answer_502_and_pause_the_api( int $code ): void {
 		$this->respondWith( $this->response( $code ) );
 
 		$this->assertError( ( new ApiRepository() )->users(), 'user_atlas_api_error', 502 );
-		$this->assertFalse( ( new ApiCache() )->isPaused() );
+		$this->assertTrue( ( new ApiCache() )->isPaused() );
 	}
 
 	/**
-	 * Client errors other than 404 and 429.
+	 * Client errors other than 404 and 429. The request URL is fixed, so they
+	 * repeat on every request until the API changes.
 	 *
 	 * @return array
 	 */
-	public function provide_other_client_errors(): array {
+	public function provide_client_errors(): array {
 		return [
-			'400 Bad Request' => [ 400 ],
-			'403 Forbidden'   => [ 403 ],
+			'400 Bad Request'  => [ 400 ],
+			'401 Unauthorized' => [ 401 ],
+			'403 Forbidden'    => [ 403 ],
 		];
+	}
+
+	public function test_the_api_is_requested_again_only_after_the_pause(): void {
+		$this->respondWith( $this->response( 403 ) );
+		$api = new ApiRepository();
+
+		$api->users();
+		$this->assertError( $api->users(), 'user_atlas_api_unavailable', 503 );
+		$this->assertSame( [ 'https://jsonplaceholder.typicode.com/users' ], $this->requests );
+		$this->assertSame( 'Invalid response code: 403', $this->transients[ ApiCache::PAUSE_KEY ]['value'] );
 	}
 
 	public function test_an_invalid_body_answers_502_and_pauses_the_api(): void {

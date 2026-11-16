@@ -77,28 +77,17 @@ abstract class AbstractApi {
 	}
 
 	/**
-	 * Check whether a response code means the API itself is failing
-	 *
-	 * A 404 or another client error concerns one resource, so it must not pause the whole API.
-	 *
-	 * @param int $code HTTP response code.
-	 *
-	 * @return bool
-	 */
-	protected function isServerFailure( int $code ): bool {
-		return 429 === $code || $code >= 500;
-	}
-
-	/**
 	 * Send request to API
 	 *
 	 * Visitors only get generic messages; the technical reason of a failure is kept with the pause.
 	 *
-	 * @param string $url URL.
+	 * @param string $url        URL.
+	 * @param bool   $can_be_404 Whether a 404 is a valid answer for this URL. Only a single resource
+	 *                           can be missing: a 404 for a fixed list URL means the API itself changed.
 	 *
 	 * @return array|WP_Error Decoded response, or an error with the HTTP status to answer with.
 	 */
-	public function send( string $url ) {
+	public function send( string $url, bool $can_be_404 = false ) {
 		$this->expiration = 0;
 
 		$cached = $this->cache->get( $url );
@@ -116,13 +105,20 @@ abstract class AbstractApi {
 			);
 		}
 
-		$response = wp_remote_get( self::API_URL . $url, [ 'timeout' => $this->timeout() ] );
+		// The API URL is fixed, so a redirect is unexpected: it fails like any other response than 200.
+		$response = wp_remote_get(
+			self::API_URL . $url,
+			[
+				'timeout'     => $this->timeout(),
+				'redirection' => 0,
+			]
+		);
 		if ( is_wp_error( $response ) ) {
 			return $this->fail( $response->get_error_message() );
 		}
 
 		$code = (int) wp_remote_retrieve_response_code( $response );
-		if ( 404 === $code ) {
+		if ( 404 === $code && $can_be_404 ) {
 			return new WP_Error(
 				'user_atlas_not_found',
 				__( 'The requested data was not found.', 'user-atlas' ),
@@ -131,7 +127,7 @@ abstract class AbstractApi {
 		}
 
 		if ( 200 !== $code ) {
-			return $this->fail( 'Invalid response code: ' . $code, $this->isServerFailure( $code ) );
+			return $this->fail( 'Invalid response code: ' . $code );
 		}
 
 		$content = json_decode( wp_remote_retrieve_body( $response ), true );
@@ -145,17 +141,17 @@ abstract class AbstractApi {
 	}
 
 	/**
-	 * Build the error for a failed request
+	 * Build the error for a failed request and pause the API
+	 *
+	 * The request URLs are fixed, so a failed request would fail the same way for every
+	 * visitor; the pause keeps the site from calling the API until it has had time to recover.
 	 *
 	 * @param string $reason Technical reason, never shown to visitors.
-	 * @param bool   $pause  Whether the failure means the API itself is unavailable.
 	 *
 	 * @return WP_Error
 	 */
-	private function fail( string $reason, bool $pause = true ): WP_Error {
-		if ( $pause ) {
-			$this->cache->pause( $reason );
-		}
+	private function fail( string $reason ): WP_Error {
+		$this->cache->pause( $reason );
 
 		return new WP_Error(
 			'user_atlas_api_error',

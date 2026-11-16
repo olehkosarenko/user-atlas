@@ -35,6 +35,6 @@ trait UsersApi {
 	public function user( int $id ) {
 		$url = 'users/' . $id;
 
-		return $this->send( $url );
+		return $this->send( $url, true );
 	}
 }

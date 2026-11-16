@@ -1,0 +1,67 @@
+name: Build
+
+# Builds the plugin zip and uploads it as the user-atlas-zip artifact.
+# The Lint workflow runs it on pull requests, the Release workflow publishes its zip.
+on:
+  workflow_call:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build the plugin zip
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          tools: composer:v2
+          coverage: none
+
+      - name: Install Composer dependencies
+        run: composer install --no-dev --optimize-autoloader --no-interaction --no-progress --prefer-dist
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: assets/.nvmrc
+          cache: npm
+          cache-dependency-path: assets/package-lock.json
+
+      - name: Build the frontend
+        working-directory: assets
+        run: |
+          npm ci
+          npm run build
+
+      - name: Package the plugin
+        run: |
+          mkdir -p dist/user-atlas/assets
+          cp -R user-atlas.php uninstall.php src templates vendor LICENSE readme.txt dist/user-atlas/
+          cp -R assets/build dist/user-atlas/assets/
+          cd dist
+          zip -rq user-atlas.zip user-atlas
+
+      - name: Check the zip contents
+        run: |
+          entries="$(unzip -Z1 dist/user-atlas.zip)"
+          for required in user-atlas/user-atlas.php user-atlas/uninstall.php user-atlas/readme.txt user-atlas/LICENSE user-atlas/templates/page.php user-atlas/vendor/autoload.php user-atlas/assets/build/index.js user-atlas/assets/build/index.asset.php; do
+            if ! grep -qxF "$required" <<< "$entries"; then
+              echo "The zip has no $required."
+              exit 1
+            fi
+          done
+          for forbidden in user-atlas/tests/ user-atlas/assets/src/ user-atlas/assets/node_modules/ user-atlas/vendor/phpunit/; do
+            if grep -q "^$forbidden" <<< "$entries"; then
+              echo "The zip must not contain $forbidden."
+              exit 1
+            fi
+          done
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: user-atlas-zip
+          path: dist/user-atlas.zip
+          if-no-files-found: error

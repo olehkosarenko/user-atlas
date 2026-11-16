@@ -49,7 +49,7 @@ class Plugin {
 	}
 
 	/**
-	 * Get the name of the plugin.
+	 * Get the file name of the plugin, used as the settings page slug.
 	 *
 	 * @return string
 	 */
@@ -58,7 +58,7 @@ class Plugin {
 	}
 
 	/**
-	 * Get the file name of the plugin, used as the settings page slug.
+	 * Get the name of the plugin.
 	 *
 	 * @return string
 	 */

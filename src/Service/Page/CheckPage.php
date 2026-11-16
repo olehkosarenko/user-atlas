@@ -16,28 +16,26 @@ defined( 'ABSPATH' ) || die();
 /**
  * Class CheckPage
  *
+ * Finds out whether the current request is the plugin page. The page slug is
+ * read when it is needed, after the theme is loaded, so the user_atlas__endpoint
+ * filter can be used from a theme too.
+ *
  * @package WpApp\UserAtlas\Service\Page
  */
 class CheckPage {
+	/**
+	 * Query var that marks the plugin page.
+	 *
+	 * @var string
+	 */
+	public const QUERY_VAR = 'user_atlas_page';
+
 	/**
 	 * Option instance.
 	 *
 	 * @var Option
 	 */
 	private Option $option;
-	/**
-	 * Page slug.
-	 *
-	 * @var string
-	 */
-	private string $slug;
-
-	/**
-	 * Request URI.
-	 *
-	 * @var string
-	 */
-	private string $request;
 
 	/**
 	 * PageChecker constructor.
@@ -48,57 +46,71 @@ class CheckPage {
 	 */
 	public function __construct( ?Option $option = null ) {
 		$this->option = $option ?? Option::instance();
-		$this->setSlug( $this->option->get( 'endpoint', 'user-atlas' ) );
-		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Only compared with the page slug, never stored or output.
-		$requestUri = isset( $_SERVER['REQUEST_URI'] ) ? wp_unslash( $_SERVER['REQUEST_URI'] ) : '';
-		$this->changeRequest( (string) $requestUri );
 	}
 
 	/**
-	 * Set slug
+	 * Get the page slug
 	 *
-	 * @param string $slug Slug.
-	 *
-	 * @return string
+	 * @return string Slug from the settings, changed by the user_atlas__endpoint filter.
 	 */
-	public function setSlug( string $slug ): string {
-		$this->slug = sanitize_title( $slug );
-		$this->slug = apply_filters( 'user_atlas__endpoint', $this->slug );
+	public function getSlug(): string {
+		$slug = sanitize_title( $this->option->get( 'endpoint', 'user-atlas' ) );
 
-		return $this->slug;
+		/**
+		 * Filters the page slug.
+		 *
+		 * @param string $slug Slug from the plugin settings. Default 'user-atlas'.
+		 */
+		$slug = sanitize_title( (string) apply_filters( 'user_atlas__endpoint', $slug ) );
+
+		return '' !== $slug ? $slug : 'user-atlas';
 	}
 
 	/**
-	 * Set the request path to compare with the page slug
+	 * Get the page URL
 	 *
-	 * Keeps the path relative to the site home, so the page also works when
-	 * WordPress is installed in a subdirectory.
-	 *
-	 * @param string $request Request URI.
-	 *
-	 * @return string Path without leading and trailing slashes, empty if it is not inside the site.
+	 * @return string The pretty URL, or a URL with the query var when the site uses plain permalinks.
 	 */
-	public function changeRequest( string $request ): string {
-		$this->request = '';
-
-		$path = wp_parse_url( $request, PHP_URL_PATH );
-		if ( ! is_string( $path ) ) {
-			return $this->request;
+	public function getUrl(): string {
+		if ( '' === (string) get_option( 'permalink_structure' ) ) {
+			return add_query_arg( self::QUERY_VAR, '1', home_url( '/' ) );
 		}
 
-		$path = trim( $path, '/' );
-		$home = trim( (string) wp_parse_url( home_url(), PHP_URL_PATH ), '/' );
-		if ( '' !== $home ) {
-			if ( 0 !== strpos( $path . '/', $home . '/' ) ) {
-				return $this->request;
-			}
+		return home_url( user_trailingslashit( $this->getSlug() ) );
+	}
 
-			$path = trim( substr( $path, strlen( $home ) ), '/' );
+	/**
+	 * Register the query var of the page
+	 *
+	 * @param array $vars Public query vars.
+	 *
+	 * @return array
+	 */
+	public function addQueryVar( array $vars ): array {
+		$vars[] = self::QUERY_VAR;
+
+		return $vars;
+	}
+
+	/**
+	 * Mark the request for the page slug as the plugin page
+	 *
+	 * WordPress keeps the request path relative to the site home, so this also
+	 * works when WordPress is installed in a subdirectory.
+	 *
+	 * @param array $queryVars Query vars parsed from the request.
+	 *
+	 * @return array
+	 */
+	public function matchRequest( array $queryVars ): array {
+		global $wp;
+
+		$request = isset( $wp->request ) ? trim( (string) $wp->request, '/' ) : '';
+		if ( '' !== $request && $request === $this->getSlug() ) {
+			return [ self::QUERY_VAR => '1' ];
 		}
 
-		$this->request = $path;
-
-		return $this->request;
+		return $queryVars;
 	}
 
 	/**
@@ -107,6 +119,6 @@ class CheckPage {
 	 * @return bool
 	 */
 	public function isPage(): bool {
-		return '' !== $this->request && $this->request === $this->slug;
+		return '' !== (string) get_query_var( self::QUERY_VAR );
 	}
 }

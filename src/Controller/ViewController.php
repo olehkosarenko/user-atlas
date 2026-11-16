@@ -63,13 +63,24 @@ class ViewController {
 	 * @return void
 	 */
 	public function init(): void {
+		add_filter( 'query_vars', [ $this->checkPage, 'addQueryVar' ] );
+		add_filter( 'request', [ $this->checkPage, 'matchRequest' ] );
+		add_action( 'template_redirect', [ $this, 'setupPage' ], 0 );
+	}
+
+	/**
+	 * Setup the hooks of the page once the request is parsed
+	 *
+	 * @return void
+	 */
+	public function setupPage(): void {
 		if ( ! $this->checkPage->isPage() ) {
 			return;
 		}
 		add_action( 'enqueue_embed_scripts', [ $this->asset, 'enqueueScripts' ] );
 		add_filter( 'pre_get_document_title', [ $this->loadPage, 'changeTitle' ] );
-		add_action( 'template_redirect', [ $this->loadPage, 'changeHeader' ], 0 );
-		add_action( 'template_redirect', [ $this->loadPage, 'changeWpQuery' ], 0 );
-		add_action( 'template_redirect', [ $this->loadPage, 'loadTemplate' ], 0 );
+		$this->loadPage->changeHeader();
+		$this->loadPage->changeWpQuery();
+		$this->loadPage->loadTemplate();
 	}
 }

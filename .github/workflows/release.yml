@@ -29,14 +29,15 @@ jobs:
           tag_version="${GITHUB_REF_NAME#v}"
           plugin_version="$(sed -n 's/^ \* Version: *//p' user-atlas.php)"
           stable_tag="$(sed -n 's/^Stable tag: *//p' readme.txt)"
-          if [ "$tag_version" != "$plugin_version" ]; then
-            echo "Tag $GITHUB_REF_NAME does not match Version $plugin_version in user-atlas.php."
-            exit 1
-          fi
-          if [ "$tag_version" != "$stable_tag" ]; then
-            echo "Tag $GITHUB_REF_NAME does not match Stable tag $stable_tag in readme.txt."
-            exit 1
-          fi
+          package_version="$(jq -r '.version' assets/package.json)"
+          status=0
+          for found in "user-atlas.php:$plugin_version" "readme.txt:$stable_tag" "assets/package.json:$package_version"; do
+            if [ "$tag_version" != "${found#*:}" ]; then
+              echo "Tag $GITHUB_REF_NAME does not match version ${found#*:} in ${found%%:*}."
+              status=1
+            fi
+          done
+          exit $status
 
       - name: Check that the changelog has a section for the version
         run: |

@@ -4,7 +4,7 @@ Tags: users, table, rest-api, react, api
 Requires at least: 6.6
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 2.0.0
+Stable tag: 2.1.0
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -69,6 +69,15 @@ Yes. The REST routes need no nonce, so a cached copy of the page keeps loading d
 
 == Changelog ==
 
+= 2.1.0 =
+* Fixed: the page uses its own template with `wp_head()` and `wp_footer()`, is no longer sent with the headers of a 404 page, and the `user_atlas__endpoint` filter works from a theme.
+* Added: a theme can replace the page template with `user-atlas/page.php`; with plain permalinks the page is available at `/?user_atlas_page=1`.
+* Every failed API request now pauses the API, and the settings page shows the reason of the failure.
+* API requests no longer follow redirects.
+* The settings fields have labels, the page link is shown under the Endpoint field, and the last update time is set when the settings are saved.
+* Saved settings of an unexpected type no longer cause a fatal error, and the settings printed into the inline script are escaped.
+* Added an `Update URI` header, so WordPress.org updates are never offered for this plugin.
+
 = 2.0.0 =
 * Breaking: the admin-ajax endpoint is replaced by the REST routes `user-atlas/v1/users` and `user-atlas/v1/users/<id>`.
 * Breaking: WordPress 6.6 and PHP 7.4 are the minimum supported versions.
@@ -84,6 +93,9 @@ The full list of changes is in [CHANGELOG.md](https://github.com/olehkosarenko/u
 * Initial release.
 
 == Upgrade Notice ==
+
+= 2.1.0 =
+Fixes the plugin page template and headers, pauses the API after any failed request and improves the settings page. No breaking changes.
 
 = 2.0.0 =
 The admin-ajax endpoint is replaced by REST routes, and WordPress 6.6 and PHP 7.4 are now required. Check custom code that called the old endpoint before upgrading.
